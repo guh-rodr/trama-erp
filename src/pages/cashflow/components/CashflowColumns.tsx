@@ -85,8 +85,10 @@ export const getCashflowColumns = (actions: {
       <div className="flex justify-end space-x-2">
         <button
           type="button"
+          disabled={!!row.original.saleId}
+          title={row.original.saleId ? 'Essa transação tem uma venda relacionada' : undefined}
           onClick={() => actions.onEdit(row.original)}
-          className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-emerald-500 hover:text-white transition-colors"
+          className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 enabled:hover:bg-emerald-500 enabled:hover:text-white disabled:opacity-60 disabled:!cursor-not-allowed transition-colors"
         >
           <PencilIcon weight="bold" size={16} />
         </button>
