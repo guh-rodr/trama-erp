@@ -39,7 +39,7 @@ export function StatsPage() {
 
       {data && (
         <>
-          <div className="flex items-center gap-4">
+          <div className="flex items-stretch gap-4">
             <CardsStats cards={data.cards} method={method} />
           </div>
 
