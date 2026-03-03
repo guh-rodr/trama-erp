@@ -60,8 +60,8 @@ export function TopCategoriesChart({ data }: Props) {
           nameKey="category"
           paddingAngle={2}
           cornerRadius={4}
-          innerRadius={85}
-          outerRadius={120}
+          innerRadius="60%"
+          outerRadius="80%"
           strokeWidth={5}
         />
       </PieChart>
