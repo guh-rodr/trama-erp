@@ -12,12 +12,12 @@ import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
 import { useCreateModel, useEditModel } from '../../../hooks/useModels';
 import { CategoryItem } from '../../../types/category';
-import { ModelForm, ModelItemForm } from '../../../types/model';
+import { ModelForm, ModelItem, ModelItemForm } from '../../../types/model';
 
 interface Props {
   defaultCategory?: Pick<CategoryItem, 'id' | 'name'>;
   defaultModel?: ModelItemForm;
-  onCreate?: (newCategoryId: string) => void;
+  onCreate?: (newModel: ModelItem) => void;
 }
 
 export function ModelFormModal({ defaultCategory, defaultModel, onCreate }: Props) {
@@ -78,7 +78,7 @@ export function ModelFormModal({ defaultCategory, defaultModel, onCreate }: Prop
           onSuccess: (resData) => {
             onSuccess();
             if (onCreate) {
-              onCreate(resData.id);
+              onCreate(resData);
             }
           },
         },

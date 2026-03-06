@@ -6,6 +6,7 @@ import { CurrencyInput } from '../../../../components/CurrencyInput';
 import { useDialog } from '../../../../contexts/dialog/dialog-context';
 import { convertToDecimal } from '../../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../../hooks/useCategories';
+import { ModelItem } from '../../../../types/model';
 import { SaleForm } from '../../../../types/sale';
 import { COLORS } from '../../../../utils/colors';
 import { PRINTS } from '../../../../utils/prints';
@@ -51,8 +52,9 @@ export function ItemsFields({ control, setValue, getValues }: Props) {
       title: 'Adicionar novo produto',
       content: (
         <ModelFormModal
-          onCreate={(newId) => {
-            setValue(`items.${index}.modelId`, newId);
+          onCreate={(newModel) => {
+            setValue(`items.${index}.modelId`, newModel.id);
+            applyModelPricesByIdx(index, newModel);
           }}
         />
       ),
@@ -69,16 +71,22 @@ export function ItemsFields({ control, setValue, getValues }: Props) {
       )
     : [];
 
-  const changeItemPricesByIdx = (value: string, index: number) => {
-    const models = categories?.flatMap((c) => c.models) ?? [];
-    const model = models.find((m) => m?.id === value);
-
+  const applyModelPricesByIdx = (index: number, model: ModelItem) => {
     if (model?.costPrice) {
       setValue(`items.${index}.costPrice`, convertToDecimal(model.costPrice || 0));
     }
 
     if (model?.salePrice) {
       setValue(`items.${index}.salePrice`, convertToDecimal(model.salePrice || 0));
+    }
+  };
+
+  const changeModelPricesByIdx = (modelId: string, index: number) => {
+    const models = categories?.flatMap((c) => c.models) ?? [];
+    const model = models.find((m) => m?.id === modelId);
+
+    if (model) {
+      applyModelPricesByIdx(index, model);
     }
   };
 
@@ -101,7 +109,7 @@ export function ItemsFields({ control, setValue, getValues }: Props) {
                     onChangeInput={setCategorySearch}
                     onChangeOption={(value) => {
                       field.onChange(value);
-                      changeItemPricesByIdx(value, index);
+                      changeModelPricesByIdx(value, index);
                     }}
                     options={options}
                     renderOption={(option) => <span>{option.label}</span>}
