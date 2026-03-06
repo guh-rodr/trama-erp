@@ -6,9 +6,9 @@ export function formatToReal(value: number): string {
 }
 
 export function convertToCents(value: number) {
-  return Math.round(value * 100);
+  return value * 100;
 }
 
 export function convertToDecimal(value: number) {
-  return Math.round(value / 100);
+  return value / 100;
 }
