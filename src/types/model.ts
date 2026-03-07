@@ -12,8 +12,15 @@ export interface ModelItem extends ModelItemBase {
   itemCount: number;
 }
 
+export interface ModelVariantForm {
+  color: string;
+  size: string;
+  quantity: number;
+}
+
 export interface ModelItemForm extends ModelItemBase {
   id?: string;
+  variants: ModelVariantForm[];
 }
 
 export interface ModelForm {

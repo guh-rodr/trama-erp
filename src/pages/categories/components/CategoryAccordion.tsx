@@ -91,6 +91,7 @@ export function CategoryAccordion({
       name: model.name,
       costPrice: model.costPrice,
       salePrice: model.salePrice,
+      variants: [],
     };
 
     openDialog({
