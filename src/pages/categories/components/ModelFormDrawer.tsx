@@ -7,6 +7,7 @@ import { Button } from '../../../components/Button';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
 import { Label } from '../../../components/Label';
+import { ToggleSwitch } from '../../../components/ToggleSwitch';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
@@ -22,6 +23,8 @@ interface Props {
 
 export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Props) {
   const isEditMode = !!defaultModel;
+
+  const [hasVariants, setHasVariants] = useState(false);
   const [categorySearch, setCategorySearch] = useState('');
 
   const { closeDialog } = useDialog();
@@ -155,6 +158,11 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
             )}
           />
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <Label className="w-fit">Habilitar variações?</Label>
+        <ToggleSwitch isOn={hasVariants} onToggle={setHasVariants} />
       </div>
 
       <div className="flex gap-4 justify-between [&>button]:h-full">
