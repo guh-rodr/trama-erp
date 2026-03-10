@@ -23,7 +23,6 @@ export interface ModelItemForm extends ModelItemBase {
   variants: ModelVariantForm[];
 }
 
-export interface ModelForm {
+export interface ModelForm extends ModelItemForm {
   category: string; // id ou nome
-  model?: ModelItemForm;
 }
