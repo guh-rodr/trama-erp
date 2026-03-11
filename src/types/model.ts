@@ -22,6 +22,7 @@ export interface ModelVariantForm {
 
 export interface ModelItemForm extends ModelItemBase {
   id?: string;
+  quantity?: number;
   variants: ModelVariantForm[];
 }
 
