@@ -149,23 +149,31 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
 
       <div className="flex gap-4">
         <div>
-          <Label htmlFor="model">Preço de compra</Label>
+          <Label htmlFor="costPrice">Preço de compra (und.)</Label>
           <Controller
             name="costPrice"
             control={control}
             render={({ field }) => (
-              <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
+              <CurrencyInput
+                id="costPrice"
+                value={field.value as number}
+                onValueChange={(val) => field.onChange(val)}
+              />
             )}
           />
         </div>
 
         <div>
-          <Label htmlFor="model">Preço de venda</Label>
+          <Label htmlFor="salePrice">Preço de venda (und.)</Label>
           <Controller
             name="salePrice"
             control={control}
             render={({ field }) => (
-              <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
+              <CurrencyInput
+                id="salePrice"
+                value={field.value as number}
+                onValueChange={(val) => field.onChange(val)}
+              />
             )}
           />
         </div>
