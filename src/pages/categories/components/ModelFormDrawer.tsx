@@ -35,16 +35,27 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
   const isSubmitting = isCreating || isEditing;
 
   const defaultValues: ModelForm | undefined = useMemo(() => {
-    if (defaultCategory) {
-      const model = defaultModel && {
-        ...defaultModel,
+    if (!defaultCategory) return;
+
+    if (defaultModel) {
+      const model: ModelItemForm = {
         costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
         salePrice: defaultModel.salePrice ? convertToDecimal(defaultModel.salePrice) : undefined,
+        ...defaultModel,
       };
 
       return {
         category: defaultCategory.id,
-        model,
+        ...model,
+      };
+    } else {
+      return {
+        category: defaultCategory.id,
+        name: '',
+        costPrice: undefined,
+        salePrice: undefined,
+        id: '',
+        variants: [{ color: '', size: '', quantity: undefined, costPrice: undefined, salePrice: undefined }],
       };
     }
   }, [defaultModel, defaultCategory]);
@@ -133,14 +144,14 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         <Label htmlFor="model" required>
           Novo modelo
         </Label>
-        <Input id="model" {...register('model.name', { required: 'O modelo é obrigatório.' })} />
+        <Input id="model" {...register('name', { required: 'O modelo é obrigatório.' })} />
       </div>
 
       <div className="flex gap-4">
         <div>
           <Label htmlFor="model">Preço de compra</Label>
           <Controller
-            name="model.costPrice"
+            name="costPrice"
             control={control}
             render={({ field }) => (
               <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
@@ -151,7 +162,20 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         <div>
           <Label htmlFor="model">Preço de venda</Label>
           <Controller
-            name="model.salePrice"
+            name="salePrice"
+            control={control}
+            render={({ field }) => (
+              <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
+            )}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="model" required>
+            Quantidade
+          </Label>
+          <Controller
+            name="salePrice"
             control={control}
             render={({ field }) => (
               <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
