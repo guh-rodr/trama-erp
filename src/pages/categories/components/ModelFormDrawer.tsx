@@ -171,16 +171,10 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         </div>
 
         <div>
-          <Label htmlFor="model" required>
+          <Label htmlFor="quantity" required>
             Quantidade
           </Label>
-          <Controller
-            name="salePrice"
-            control={control}
-            render={({ field }) => (
-              <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
-            )}
-          />
+          <Input id="quantity" type="number" {...register('quantity', { required: 'A quantidade é obrigatória.' })} />
         </div>
       </div>
 
