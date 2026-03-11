@@ -17,7 +17,7 @@ const DialogModal = React.memo(({ title, content }: DialogComponentProps) => (
 ));
 
 const DialogDrawer = React.memo(({ title, content, closeDialog }: DialogComponentProps) => (
-  <div className="z-50 flex h-full w-11/12 max-w-[410px] ml-auto flex-col overflow-y-auto rounded-l-2xl bg-neutral-100 p-4">
+  <div className="z-50 flex h-full max-w-11/12 min-w-md ml-auto flex-col overflow-y-auto rounded-l-2xl bg-neutral-100 p-4">
     <div className="flex items-center justify-between">
       <h2 className="text-xl font-semibold">{title}</h2>
 
@@ -25,7 +25,7 @@ const DialogDrawer = React.memo(({ title, content, closeDialog }: DialogComponen
         <XIcon />
       </button>
     </div>
-    <div className="mt-4 flex-1 overflow-hidden">{content}</div>
+    <div className="mt-4 flex-1">{content}</div>
   </div>
 ));
 
