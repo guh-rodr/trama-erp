@@ -147,7 +147,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         <Input id="model" {...register('name', { required: 'O modelo é obrigatório.' })} />
       </div>
 
-      <div className="flex gap-4">
+      <div className={`flex gap-4 ${hasVariants ? 'opacity-50' : ''}`}>
         <div>
           <Label htmlFor="costPrice">Preço de compra (und.)</Label>
           <Controller
@@ -156,6 +156,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
             render={({ field }) => (
               <CurrencyInput
                 id="costPrice"
+                disabled={hasVariants}
                 value={field.value as number}
                 onValueChange={(val) => field.onChange(val)}
               />
@@ -171,6 +172,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
             render={({ field }) => (
               <CurrencyInput
                 id="salePrice"
+                disabled={hasVariants}
                 value={field.value as number}
                 onValueChange={(val) => field.onChange(val)}
               />
@@ -182,7 +184,12 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
           <Label htmlFor="quantity" required>
             Quantidade
           </Label>
-          <Input id="quantity" type="number" {...register('quantity', { required: 'A quantidade é obrigatória.' })} />
+          <Input
+            id="quantity"
+            disabled={hasVariants}
+            type="number"
+            {...register('quantity', { required: 'A quantidade é obrigatória.' })}
+          />
         </div>
       </div>
 
