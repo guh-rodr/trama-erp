@@ -181,14 +181,14 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         </div>
 
         <div>
-          <Label htmlFor="quantity" required>
+          <Label htmlFor="quantity" required={!hasVariants}>
             Quantidade
           </Label>
           <Input
             id="quantity"
             disabled={hasVariants}
             type="number"
-            {...register('quantity', { required: 'A quantidade é obrigatória.' })}
+            {...register('quantity', { required: hasVariants ? false : 'A quantidade é obrigatória.' })}
           />
         </div>
       </div>
