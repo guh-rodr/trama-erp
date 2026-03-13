@@ -189,7 +189,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
             type="number"
             {...register('quantity', {
               required: hasVariants ? false : 'A quantidade é obrigatória.',
-              valueAsNumber: true,
+              setValueAs: (v) => (v !== '' ? Number(v) : undefined),
             })}
           />
         </div>
