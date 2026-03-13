@@ -54,7 +54,6 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         name: '',
         costPrice: undefined,
         salePrice: undefined,
-        id: '',
         variants: [{ color: '', size: '', quantity: undefined, costPrice: undefined, salePrice: undefined }],
       };
     }
