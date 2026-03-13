@@ -14,6 +14,7 @@ import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
 import { useCreateModel, useEditModel } from '../../../hooks/useModels';
 import { CategoryItem } from '../../../types/category';
 import { ModelForm, ModelItem, ModelItemForm } from '../../../types/model';
+import { ModelVariantsTable } from './ModelVariantsTable';
 
 interface Props {
   defaultCategory?: Pick<CategoryItem, 'id' | 'name'>;
@@ -199,6 +200,8 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         <Label className="w-fit">Habilitar variações?</Label>
         <ToggleSwitch isOn={hasVariants} onToggle={setHasVariants} />
       </div>
+
+      {hasVariants && <ModelVariantsTable control={control} />}
 
       <div className="flex gap-4 justify-between [&>button]:h-full">
         <Button variant="outline" onClick={() => closeDialog()} type="button">
