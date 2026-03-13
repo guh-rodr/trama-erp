@@ -12,7 +12,7 @@ export function useCreateModel() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ category, model }: CreateMutationProps) => {
+    mutationFn: async ({ category, ...model }: CreateMutationProps) => {
       const response = await api.post(`/categories/${category}/models`, model);
       return response.data;
     },
@@ -69,7 +69,7 @@ export function useEditModel() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ category, model }: Required<ModelForm>) => {
+    mutationFn: async ({ category, ...model }: Required<ModelForm>) => {
       const response = await api.patch(`/categories/${category}/models/${model.id}`, model);
       return response.data;
     },
