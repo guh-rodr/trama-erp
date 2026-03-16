@@ -1,4 +1,4 @@
-import { ModelItem, ModelItemForm } from './model';
+import { ModelItem } from './model';
 
 export interface CategoryItem {
   id: string;
@@ -8,7 +8,6 @@ export interface CategoryItem {
 
 export interface CreateCategoryForm {
   name: string;
-  models: ModelItemForm[];
 }
 
 export type EditCategoryForm = Pick<CategoryItem, 'id' | 'name'>;
