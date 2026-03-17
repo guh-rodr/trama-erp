@@ -25,7 +25,7 @@ interface Props {
 export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Props) {
   const isEditMode = !!defaultModel;
 
-  const [hasVariants, setHasVariants] = useState(false);
+  const [hasVariants, setHasVariants] = useState(defaultModel?.isVariable ?? false);
   const [categorySearch, setCategorySearch] = useState('');
 
   const { closeDialog } = useDialog();
@@ -39,10 +39,17 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     if (!defaultCategory) return;
 
     if (defaultModel) {
+      const variants = defaultModel.variants.map((v) => ({
+        ...v,
+        costPrice: convertToDecimal(v.costPrice!),
+        salePrice: convertToDecimal(v.salePrice!),
+      }));
+
       const model: ModelItemForm = {
+        ...defaultModel,
+        variants,
         costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
         salePrice: defaultModel.salePrice ? convertToDecimal(defaultModel.salePrice) : undefined,
-        ...defaultModel,
       };
 
       return {
@@ -53,9 +60,10 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
       return {
         category: defaultCategory.id,
         name: '',
+        isVariable: false,
         costPrice: undefined,
         salePrice: undefined,
-        variants: [{ color: '', size: '', quantity: undefined, costPrice: undefined, salePrice: undefined }],
+        variants: [],
       };
     }
   }, [defaultModel, defaultCategory]);
