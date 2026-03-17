@@ -89,9 +89,11 @@ export function CategoryAccordion({
     const defaultModel: ModelItemForm = {
       id: model.id,
       name: model.name,
+      isVariable: model.isVariable,
       costPrice: model.costPrice,
       salePrice: model.salePrice,
-      variants: [],
+      quantity: model.quantity,
+      variants: model.variants,
     };
 
     openDialog({
