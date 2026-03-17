@@ -2,8 +2,11 @@ import { CategoryItem } from './category';
 
 interface ModelItemBase {
   name: string;
+  isVariable: boolean;
   costPrice?: number;
   salePrice?: number;
+  quantity?: number;
+  variants: ModelVariantForm[];
 }
 
 export interface ModelItem extends ModelItemBase {
@@ -22,7 +25,6 @@ export interface ModelVariantForm {
 
 export interface ModelItemForm extends ModelItemBase {
   id?: string;
-  quantity?: number;
   variants: ModelVariantForm[];
 }
 
