@@ -1,33 +1,37 @@
-import { CategoryItem } from './category';
-
-interface ModelItemBase {
-  name: string;
-  isVariable: boolean;
-  costPrice?: number;
-  salePrice?: number;
-  quantity?: number;
-  variants: ModelVariantForm[];
-}
-
-export interface ModelItem extends ModelItemBase {
+interface ModelVariant {
   id: string;
-  category: Pick<CategoryItem, 'id' | 'name'>;
-  itemCount: number;
+  size: string;
+  color: string;
+  costPrice: number;
+  salePrice: number;
+  quantity: number;
 }
 
-export interface ModelVariantForm {
-  color: string;
+interface ModelVariantForm {
+  id?: string;
   size: string;
-  quantity?: number;
+  color: string;
   costPrice?: number;
   salePrice?: number;
+  quantity?: number;
 }
 
-export interface ModelItemForm extends ModelItemBase {
+export interface ModelForm {
   id?: string;
-  variants: ModelVariantForm[];
+  name: string;
+  category: string; // id ou nome
+  costPrice?: number;
+  salePrice?: number;
+  quantity?: number;
+  variants?: ModelVariantForm[];
 }
 
-export interface ModelForm extends ModelItemForm {
-  category: string; // id ou nome
-}
+export type ModelItem = {
+  id: string;
+  name: string;
+  categoryId: string;
+  itemCount: number;
+} & (
+  | { isVariable: true; variants: ModelVariant[] }
+  | { isVariable: false; costPrice: number; salePrice: number; quantity: number }
+);

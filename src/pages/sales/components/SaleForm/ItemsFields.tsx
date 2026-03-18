@@ -72,12 +72,14 @@ export function ItemsFields({ control, setValue, getValues }: Props) {
     : [];
 
   const applyModelPricesByIdx = (index: number, model: ModelItem) => {
-    if (model?.costPrice) {
-      setValue(`items.${index}.costPrice`, convertToDecimal(model.costPrice || 0));
-    }
+    if (!model.isVariable) {
+      if (model?.costPrice) {
+        setValue(`items.${index}.costPrice`, convertToDecimal(model.costPrice || 0));
+      }
 
-    if (model?.salePrice) {
-      setValue(`items.${index}.salePrice`, convertToDecimal(model.salePrice || 0));
+      if (model?.salePrice) {
+        setValue(`items.${index}.salePrice`, convertToDecimal(model.salePrice || 0));
+      }
     }
   };
 

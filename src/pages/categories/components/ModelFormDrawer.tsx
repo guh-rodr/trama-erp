@@ -13,12 +13,12 @@ import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
 import { useCreateModel, useEditModel } from '../../../hooks/useModels';
 import { CategoryItem } from '../../../types/category';
-import { ModelForm, ModelItem, ModelItemForm } from '../../../types/model';
+import { ModelForm, ModelItem } from '../../../types/model';
 import { ModelVariantsTable } from './ModelVariantsTable';
 
 interface Props {
   defaultCategory?: Pick<CategoryItem, 'id' | 'name'>;
-  defaultModel?: ModelItemForm;
+  defaultModel?: ModelItem;
   onCreate?: (newModel: ModelItem) => void;
 }
 
@@ -39,28 +39,31 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     if (!defaultCategory) return;
 
     if (defaultModel) {
-      const variants = defaultModel.variants.map((v) => ({
-        ...v,
-        costPrice: convertToDecimal(v.costPrice!),
-        salePrice: convertToDecimal(v.salePrice!),
-      }));
+      if (defaultModel.isVariable) {
+        const variants = defaultModel.variants.map((v) => ({
+          ...v,
+          costPrice: convertToDecimal(v.costPrice!),
+          salePrice: convertToDecimal(v.salePrice!),
+        }));
 
-      const model: ModelItemForm = {
-        ...defaultModel,
-        variants,
-        costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
-        salePrice: defaultModel.salePrice ? convertToDecimal(defaultModel.salePrice) : undefined,
-      };
-
-      return {
-        category: defaultCategory.id,
-        ...model,
-      };
+        return {
+          name: defaultModel.name,
+          category: defaultCategory.id,
+          variants,
+        };
+      } else {
+        return {
+          name: defaultModel.name,
+          category: defaultCategory.id,
+          costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
+          salePrice: defaultModel.salePrice ? convertToDecimal(defaultModel.salePrice) : undefined,
+          quantity: defaultModel.quantity,
+        };
+      }
     } else {
       return {
         category: defaultCategory.id,
         name: '',
-        isVariable: false,
         costPrice: undefined,
         salePrice: undefined,
         variants: [],

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { useEditCategory } from '../../../hooks/useCategories';
 import { CategoryItem, EditCategoryForm } from '../../../types/category';
-import { ModelItem, ModelItemForm } from '../../../types/model';
+import { ModelItem } from '../../../types/model';
 import { CategoryDeleteModal } from './CategoryDeleteModal';
 import { ModelCard } from './ModelCard';
 import { ModelDeleteModal } from './ModelDeleteModal';
@@ -86,20 +86,10 @@ export function CategoryAccordion({
   };
 
   const handleEditModel = (model: ModelItem) => {
-    const defaultModel: ModelItemForm = {
-      id: model.id,
-      name: model.name,
-      isVariable: model.isVariable,
-      costPrice: model.costPrice,
-      salePrice: model.salePrice,
-      quantity: model.quantity,
-      variants: model.variants,
-    };
-
     openDialog({
       type: 'drawer',
       title: 'Editar modelo',
-      content: <ModelFormDrawer defaultCategory={category} defaultModel={defaultModel} />,
+      content: <ModelFormDrawer defaultCategory={category} defaultModel={model} />,
     });
   };
 
