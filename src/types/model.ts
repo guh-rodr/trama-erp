@@ -2,6 +2,7 @@ interface ModelVariant {
   id: string;
   size: string;
   color: string;
+  hasSales: boolean;
   costPrice: number;
   salePrice: number;
   quantity: number;
@@ -11,6 +12,7 @@ interface ModelVariantForm {
   id?: string;
   size: string;
   color: string;
+  hasSales: boolean;
   costPrice?: number;
   salePrice?: number;
   quantity?: number;

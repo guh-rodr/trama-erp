@@ -12,14 +12,14 @@ interface Props {
   inEditMode?: boolean;
 }
 
-export function ModelVariantsTable({ control }: Props) {
+export function ModelVariantsTable({ control, inEditMode = false }: Props) {
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'variants',
   });
 
   const handleAddVariant = () => {
-    append({ color: '', size: '', quantity: undefined }, { shouldFocus: false });
+    append({ color: '', size: '', hasSales: false, quantity: undefined }, { shouldFocus: false });
   };
 
   return (
@@ -39,7 +39,14 @@ export function ModelVariantsTable({ control }: Props) {
         <tbody>
           {fields.map((field, index) => (
             <tr key={field.id} className="border-y border-neutral-200 text-sm *:p-2">
-              <td className="!w-[180px]">
+              <td className="!w-[180px] relative">
+                {field.hasSales && (
+                  <div
+                    title="Essa variante já possui uma venda, não é possível alterar esse campo"
+                    className="absolute z-50 inset-0 bg-white/50"
+                  />
+                )}
+
                 <Controller
                   name={`variants.${index}.color`}
                   control={control}
@@ -69,7 +76,14 @@ export function ModelVariantsTable({ control }: Props) {
                 />
               </td>
 
-              <td className="!w-[90px]">
+              <td className="!w-[90px] relative">
+                {field.hasSales && (
+                  <div
+                    title="Essa variante já possui uma venda, não é possível alterar esse campo"
+                    className="absolute z-50 inset-0 bg-white/50"
+                  />
+                )}
+
                 <Controller
                   name={`variants.${index}.size`}
                   control={control}
