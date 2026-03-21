@@ -20,6 +20,7 @@ interface Props {
   options: Option[];
   status?: QueryStatus;
   readOnly?: boolean;
+  disabled?: boolean;
   showActionsOnEmpty?: boolean;
   value?: string;
   onChangeInput?: (value: string) => void;
@@ -35,6 +36,7 @@ export function Autocomplete({
   options,
   status = 'success',
   readOnly,
+  disabled,
   showActionsOnEmpty,
   value,
   onChangeInput,
@@ -161,6 +163,7 @@ export function Autocomplete({
           ref={inputRef}
           className={className}
           readOnly={readOnly}
+          disabled={disabled}
           value={inputValue}
           onChange={handleChangeInput}
           placeholder={placeholder}
