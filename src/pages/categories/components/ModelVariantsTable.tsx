@@ -9,6 +9,7 @@ import { SIZES } from '../../../utils/sizes';
 
 interface Props {
   control: Control<ModelForm>;
+  inEditMode?: boolean;
 }
 
 export function ModelVariantsTable({ control }: Props) {
@@ -118,7 +119,7 @@ export function ModelVariantsTable({ control }: Props) {
                 <button
                   className="text-red-400 rounded-md enabled:hover:bg-red-100/40 size-full p-3 transition-colors mr-0 ml-auto disabled:opacity-50 disabled:!cursor-default"
                   type="button"
-                  disabled={fields.length === 1}
+                  disabled={!inEditMode && fields.length === 1}
                   onClick={() => remove(index)}
                 >
                   <TrashIcon size={16} weight="bold" />
