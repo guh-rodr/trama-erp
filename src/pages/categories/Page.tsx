@@ -14,7 +14,7 @@ export function CategoriesPage() {
   const openCategoryForm = () => {
     openDialog({
       title: 'Adicionar nova categoria',
-      type: 'drawer',
+      type: 'modal',
       content: <CategoryForm />,
     });
   };
