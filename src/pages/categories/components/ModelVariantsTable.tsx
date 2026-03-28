@@ -3,23 +3,34 @@ import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
-import { ModelForm } from '../../../types/model';
+import { ModelForm, ModelVariant } from '../../../types/model';
 import { COLORS } from '../../../utils/colors';
 import { SIZES } from '../../../utils/sizes';
 
 interface Props {
   control: Control<ModelForm>;
   inEditMode?: boolean;
+  variants: ModelVariant[];
 }
 
-export function ModelVariantsTable({ control, inEditMode = false }: Props) {
-  const { append, remove, fields } = useFieldArray({
+export function ModelVariantsTable({
+  control,
+  inEditMode = false,
+  variants,
+}: Props) {
+  const { append, remove, update, fields } = useFieldArray({
     control,
     name: 'variants',
+    keyName: 'fieldId',
   });
 
   const handleAddVariant = () => {
-    append({ color: '', size: '', hasSales: false, quantity: undefined }, { shouldFocus: false });
+    append({ color: '', size: '' }, { shouldFocus: false });
+  };
+
+  const hasVariantSales = (id?: string) => {
+    if (!id) return false;
+    return variants.find((v) => v.id === id)?.hasSales ?? false;
   };
 
   return (
@@ -36,11 +47,11 @@ export function ModelVariantsTable({ control, inEditMode = false }: Props) {
           </tr>
         </thead>
 
-        <tbody>
-          {fields.map((field, index) => (
-            <tr key={field.id} className="border-y border-neutral-200 text-sm *:p-2">
+        <tbody className="relative">
+          {fields.map((variantField, index) => (
+            <tr key={variantField.fieldId} className={`border-y border-neutral-200 text-sm relative *:p-2`}>
               <td className="!w-[180px] relative">
-                {field.hasSales && (
+                {hasVariantSales(variantField.id) && (
                   <div
                     title="Essa variante já possui uma venda, não é possível alterar esse campo"
                     className="absolute z-50 inset-0 bg-white/50"
@@ -56,6 +67,7 @@ export function ModelVariantsTable({ control, inEditMode = false }: Props) {
                       value={field.value}
                       options={COLORS}
                       readOnly
+                      disabled={hasVariantSales(variantField.id)}
                       placeholder="Escolha a cor"
                       onChangeOption={field.onChange}
                       renderOption={(option) => {
@@ -77,7 +89,7 @@ export function ModelVariantsTable({ control, inEditMode = false }: Props) {
               </td>
 
               <td className="!w-[90px] relative">
-                {field.hasSales && (
+                {hasVariantSales(variantField.id) && (
                   <div
                     title="Essa variante já possui uma venda, não é possível alterar esse campo"
                     className="absolute z-50 inset-0 bg-white/50"
@@ -91,6 +103,7 @@ export function ModelVariantsTable({ control, inEditMode = false }: Props) {
                   render={({ field }) => (
                     <Autocomplete
                       readOnly
+                      disabled={hasVariantSales(variantField.id)}
                       placeholder="Tam."
                       options={SIZES}
                       value={field.value}

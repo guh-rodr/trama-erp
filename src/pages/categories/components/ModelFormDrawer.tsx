@@ -212,7 +212,13 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         <ToggleSwitch isOn={hasVariants} onToggle={setHasVariants} />
       </div>
 
-      {hasVariants && <ModelVariantsTable inEditMode={!!defaultModel} control={control} />}
+      {hasVariants && (
+        <ModelVariantsTable
+          control={control}
+          inEditMode={!!defaultModel}
+          variants={defaultModel?.isVariable ? defaultModel.variants : []}
+        />
+      )}
 
       <div className="flex gap-4 justify-between [&>button]:h-full">
         <Button variant="outline" onClick={() => closeDialog()} type="button">
