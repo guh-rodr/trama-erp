@@ -12,7 +12,7 @@ export function CategoryForm() {
   const { closeDialog } = useDialog();
   const { mutate, isPending } = useCreateCategory();
 
-  const { handleSubmit, register, formState } = useForm<CreateCategoryForm>();
+  const { handleSubmit, register } = useForm<CreateCategoryForm>();
 
   const onError = useCallback(() => {
     toast.error('Existem campos vazios ou inválidos.', { id: 'form-error' });
@@ -38,9 +38,13 @@ export function CategoryForm() {
         />
       </div>
 
-      <div>
-        <Button type="submit" disabled={!formState.isDirty} isLoading={isPending} className="w-full mt-4 text-center">
-          Criar categoria
+      <div className="flex gap-4 justify-between">
+        <Button type="button" variant="outline" className="w-full mt-4 text-center" onClick={() => closeDialog()}>
+          Cancelar
+        </Button>
+
+        <Button type="submit" isLoading={isPending} className="w-full mt-4 text-center">
+          Adicionar categoria
         </Button>
       </div>
     </form>
