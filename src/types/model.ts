@@ -12,6 +12,7 @@ export interface ModelVariantForm {
   id?: string;
   size: string;
   color: string;
+  status?: 'idle' | 'added' | 'modified' | 'removed';
   costPrice?: number;
   salePrice?: number;
   quantity?: number;

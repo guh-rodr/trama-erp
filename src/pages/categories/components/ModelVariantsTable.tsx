@@ -1,5 +1,12 @@
-import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { ArrowUUpLeftIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
+import {
+  Control,
+  Controller,
+  useFieldArray,
+  UseFormGetFieldState,
+  UseFormGetValues,
+  UseFormSetValue,
+} from 'react-hook-form';
 import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
@@ -11,12 +18,18 @@ interface Props {
   control: Control<ModelForm>;
   inEditMode?: boolean;
   variants: ModelVariant[];
+  getValues: UseFormGetValues<ModelForm>;
+  setValue: UseFormSetValue<ModelForm>;
+  getFieldState: UseFormGetFieldState<ModelForm>;
 }
 
 export function ModelVariantsTable({
   control,
   inEditMode = false,
   variants,
+  getValues,
+  setValue,
+  getFieldState,
 }: Props) {
   const { append, remove, update, fields } = useFieldArray({
     control,
@@ -24,8 +37,33 @@ export function ModelVariantsTable({
     keyName: 'fieldId',
   });
 
+  const markVariantAsModified = (index: number) => {
+    const fieldState = getFieldState(`variants.${index}`);
+    const variant = getValues(`variants.${index}`);
+
+    if (variant.status === 'idle' && fieldState.isDirty) {
+      setValue(`variants.${index}.status`, 'modified');
+    } else if (variant.status === 'modified' && !fieldState.isDirty) {
+      setValue(`variants.${index}.status`, 'idle');
+    }
+  };
+
   const handleAddVariant = () => {
-    append({ color: '', size: '' }, { shouldFocus: false });
+    append({ color: '', size: '', status: 'added' }, { shouldFocus: false });
+  };
+
+  const handleRemoveVariant = (index: number, fieldVariant: NonNullable<ModelForm['variants']>[number]) => {
+    const canMarkAsRemoved = ['idle', 'updated'].includes(fieldVariant.status!);
+
+    if (inEditMode && canMarkAsRemoved) {
+      update(index, { ...fieldVariant, status: 'removed' });
+    } else {
+      remove(index);
+    }
+  };
+
+  const handleUndoVariantRemove = (index: number, fieldVariant: NonNullable<ModelForm['variants']>[number]) => {
+    update(index, { ...fieldVariant, status: 'idle' });
   };
 
   const hasVariantSales = (id?: string) => {
@@ -49,7 +87,10 @@ export function ModelVariantsTable({
 
         <tbody className="relative">
           {fields.map((variantField, index) => (
-            <tr key={variantField.fieldId} className={`border-y border-neutral-200 text-sm relative *:p-2`}>
+            <tr
+              key={variantField.fieldId}
+              className={`border-y border-neutral-200 text-sm relative *:p-2 ${variantField.status === 'removed' ? '[&>*:not(.ignore)]:opacity-50' : ''}`}
+            >
               <td className="!w-[180px] relative">
                 {hasVariantSales(variantField.id) && (
                   <div
@@ -67,9 +108,12 @@ export function ModelVariantsTable({
                       value={field.value}
                       options={COLORS}
                       readOnly
-                      disabled={hasVariantSales(variantField.id)}
+                      disabled={variantField.status === 'removed' || hasVariantSales(variantField.id)}
                       placeholder="Escolha a cor"
-                      onChangeOption={field.onChange}
+                      onChangeOption={(e) => {
+                        field.onChange(e);
+                        markVariantAsModified(index);
+                      }}
                       renderOption={(option) => {
                         const hexColor = COLORS.find((c) => c.value === option.value)?.hex;
 
@@ -103,22 +147,37 @@ export function ModelVariantsTable({
                   render={({ field }) => (
                     <Autocomplete
                       readOnly
-                      disabled={hasVariantSales(variantField.id)}
+                      disabled={variantField.status === 'removed' || hasVariantSales(variantField.id)}
                       placeholder="Tam."
                       options={SIZES}
                       value={field.value}
-                      onChangeOption={field.onChange}
+                      onChangeOption={(e) => {
+                        field.onChange(e);
+                        markVariantAsModified(index);
+                      }}
                     />
                   )}
                 />
               </td>
 
               <td>
-                <Input
-                  className="!w-[70px]"
-                  type="number"
-                  placeholder="Qntd."
-                  {...control.register(`variants.${index}.quantity`, { valueAsNumber: true, required: true })}
+                <Controller
+                  name={`variants.${index}.quantity`}
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Input
+                      className="!w-[70px]"
+                      disabled={variantField.status === 'removed'}
+                      type="number"
+                      placeholder="Qntd."
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        field.onChange(e.target.valueAsNumber);
+                        markVariantAsModified(index);
+                      }}
+                    />
+                  )}
                 />
               </td>
 
@@ -127,7 +186,14 @@ export function ModelVariantsTable({
                   name={`variants.${index}.costPrice`}
                   control={control}
                   render={({ field }) => (
-                    <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
+                    <CurrencyInput
+                      disabled={variantField.status === 'removed'}
+                      value={field.value as number}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        markVariantAsModified(index);
+                      }}
+                    />
                   )}
                 />
               </td>
@@ -137,20 +203,38 @@ export function ModelVariantsTable({
                   name={`variants.${index}.salePrice`}
                   control={control}
                   render={({ field }) => (
-                    <CurrencyInput value={field.value as number} onValueChange={(val) => field.onChange(val)} />
+                    <CurrencyInput
+                      disabled={variantField.status === 'removed'}
+                      value={field.value as number}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        markVariantAsModified(index);
+                      }}
+                    />
                   )}
                 />
               </td>
 
-              <td className="!pl-0">
-                <button
-                  className="text-red-400 rounded-md enabled:hover:bg-red-100/40 size-full p-3 transition-colors mr-0 ml-auto disabled:opacity-50 disabled:!cursor-default"
-                  type="button"
-                  disabled={!inEditMode && fields.length === 1}
-                  onClick={() => remove(index)}
-                >
-                  <TrashIcon size={16} weight="bold" />
-                </button>
+              <td className="!pl-0 ignore">
+                {variantField.status === 'removed' ? (
+                  <button
+                    className="text-blue-400 rounded-md enabled:hover:bg-blue-100/40 size-full p-3 transition-colors mr-0 ml-auto disabled:opacity-50 disabled:!cursor-default"
+                    type="button"
+                    disabled={!inEditMode && fields.length === 1}
+                    onClick={() => handleUndoVariantRemove(index, variantField)}
+                  >
+                    <ArrowUUpLeftIcon size={16} weight="bold" />
+                  </button>
+                ) : (
+                  <button
+                    className="text-red-400 rounded-md enabled:hover:bg-red-100/40 size-full p-3 transition-colors mr-0 ml-auto disabled:opacity-50 disabled:!cursor-default"
+                    type="button"
+                    disabled={!inEditMode && fields.length === 1}
+                    onClick={() => handleRemoveVariant(index, variantField)}
+                  >
+                    <TrashIcon size={16} weight="bold" />
+                  </button>
+                )}
               </td>
             </tr>
           ))}

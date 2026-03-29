@@ -13,7 +13,7 @@ import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
 import { useCreateModel, useEditModel } from '../../../hooks/useModels';
 import { CategoryItem } from '../../../types/category';
-import { ModelForm, ModelItem } from '../../../types/model';
+import { ModelForm, ModelItem, ModelVariantForm } from '../../../types/model';
 import { ModelVariantsTable } from './ModelVariantsTable';
 
 interface Props {
@@ -40,19 +40,24 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
 
     if (defaultModel) {
       if (defaultModel.isVariable) {
-        const variants = defaultModel.variants.map((v) => ({
-          ...v,
-          costPrice: convertToDecimal(v.costPrice!),
-          salePrice: convertToDecimal(v.salePrice!),
-        }));
+        const variants = defaultModel.variants.map(
+          ({ hasSales: _hasSales, ...v }): ModelVariantForm => ({
+            ...v,
+            costPrice: convertToDecimal(v.costPrice!),
+            salePrice: convertToDecimal(v.salePrice!),
+            status: 'idle' as const,
+          }),
+        );
 
         return {
+          id: defaultModel.id,
           name: defaultModel.name,
           category: defaultCategory.id,
           variants,
         };
       } else {
         return {
+          id: defaultModel.id,
           name: defaultModel.name,
           category: defaultCategory.id,
           costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
@@ -64,14 +69,12 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
       return {
         category: defaultCategory.id,
         name: '',
-        costPrice: undefined,
-        salePrice: undefined,
         variants: [],
       };
     }
   }, [defaultModel, defaultCategory]);
 
-  const { control, register, setValue, handleSubmit } = useForm<ModelForm>({
+  const { control, register, setValue, handleSubmit, getValues, getFieldState } = useForm<ModelForm>({
     defaultValues,
   });
 
@@ -97,8 +100,10 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     if (isEditMode) {
       editModel(data as Required<ModelForm>, { onSuccess });
     } else {
+      const variantsWithoutStatus = data.variants?.map(({ status: _status, ...v }) => ({ ...v }));
+
       createModel(
-        { ...data, isCategoryCreation: !!categorySearch },
+        { ...data, variants: variantsWithoutStatus, isCategoryCreation: !!categorySearch },
         {
           onSuccess: (resData) => {
             onSuccess();
@@ -217,6 +222,9 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
           control={control}
           inEditMode={!!defaultModel}
           variants={defaultModel?.isVariable ? defaultModel.variants : []}
+          setValue={setValue}
+          getValues={getValues}
+          getFieldState={getFieldState}
         />
       )}
 
