@@ -18,9 +18,12 @@ export interface ModelVariantForm {
   quantity?: number;
 }
 
+type ModelType = 'simple' | 'variable';
+
 export interface ModelForm {
   id?: string;
   name: string;
+  type: ModelType;
   category: string; // id ou nome
   costPrice?: number;
   salePrice?: number;
