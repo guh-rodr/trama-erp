@@ -7,6 +7,7 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
@@ -54,9 +55,15 @@ export function ModelVariantsTable({
 
   const handleRemoveVariant = (index: number, fieldVariant: NonNullable<ModelForm['variants']>[number]) => {
     const canMarkAsRemoved = ['idle', 'updated'].includes(fieldVariant.status!);
-
     if (inEditMode && canMarkAsRemoved) {
-      update(index, { ...fieldVariant, status: 'removed' });
+      const markAsRemoved = () => update(index, { ...fieldVariant, status: 'removed' });
+      if (getValues('variants')?.filter((f) => f.status !== 'removed').length === 1) {
+        toast(
+          'Não é possível remover ou arquivar a última variante ativa.\n\nConverta para modelo simples se necessário.',
+        );
+        return;
+      }
+      markAsRemoved();
     } else {
       remove(index);
     }
