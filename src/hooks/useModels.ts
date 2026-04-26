@@ -1,21 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { api } from '../lib/api';
+import { createModel, deleteModel, editModel } from '../services/model';
 import { CategoryItem } from '../types/category';
-import { ModelForm, ModelItem } from '../types/model';
-
-interface CreateMutationProps extends ModelForm {
-  isCategoryCreation?: boolean;
-}
+import { ModelItem } from '../types/model';
 
 export function useCreateModel() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ category, ...model }: CreateMutationProps) => {
-      const response = await api.post(`/categories/${category}/models`, model);
-      return response.data;
-    },
+    mutationFn: createModel,
     onSuccess: (data: ModelItem) => {
       toast.success('Modelo registrado com sucesso!');
 
@@ -59,10 +52,7 @@ export function useEditModel() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ category, ...model }: Required<ModelForm>) => {
-      const response = await api.patch(`/categories/${category}/models/${model.id}`, model);
-      return response.data;
-    },
+    mutationFn: editModel,
     onSuccess: (data: ModelItem) => {
       toast.success('Modelo editado com sucesso!');
 
@@ -84,18 +74,11 @@ export function useEditModel() {
   });
 }
 
-interface DeleteMutationProps {
-  categoryId: string;
-  modelId: string;
-}
-
 export function useDeleteModel() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ categoryId, modelId }: DeleteMutationProps) => {
-      return api.delete(`/categories/${categoryId}/models/${modelId}`);
-    },
+    mutationFn: deleteModel,
     onSuccess: ({ data }) => {
       toast.success('Modelo excluído com sucesso!');
 
