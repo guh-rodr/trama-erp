@@ -1,6 +1,6 @@
 import { PlusIcon, UserIcon } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, type SubmitHandler } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { Button } from '../../../../components/Button';
@@ -13,7 +13,7 @@ import { CustomerRow } from '../../../../types/customer';
 import { SaleForm } from '../../../../types/sale';
 import { CustomerFormModal } from '../../../customers/components/CustomerFormModal';
 import { InstallmentToggleForm } from './InstallmentToggleForm';
-import { ItemsFields } from './ItemsFields';
+import { ItemField } from './ItemField';
 import { SaleSummary } from './SaleSummary';
 
 const currentDate = getTodayDate();
@@ -40,9 +40,14 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
   } = useForm<SaleForm>({
     defaultValues: {
       customerId: defaultCustomer?.id,
-      items: [{ modelId: '', color: '', print: '', size: '' }],
+      items: [{ modelId: '' }],
       installment: { paidAt: currentDate },
     },
+  });
+
+  const { fields, append, update, remove } = useFieldArray({
+    control,
+    name: 'items',
   });
 
   const onError = useCallback(() => {
@@ -50,7 +55,7 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
   }, []);
 
   const onSubmit: SubmitHandler<SaleForm> = (data) => {
-    const installment = typeof data.installment?.value === 'number' ? data.installment : null;
+    const installment = typeof data.installment?.value === 'number' ? data.installment : undefined;
 
     mutate(
       { ...data, installment },
@@ -127,7 +132,18 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
 
         <hr className="border-neutral-300 mt-2" />
 
-        <ItemsFields control={control} setValue={setValue} getValues={getValues} />
+        {fields.map((field, index) => (
+          <ItemField
+            key={field.id}
+            index={index}
+            control={control}
+            canRemove={fields.length !== 1}
+            onToggleModel={(newModelId) => update(index, { modelId: newModelId, variantId: '' })}
+            onAdd={() => append({ modelId: '', variantId: '' })}
+            onDuplicate={() => append(getValues(`items.${index}`))}
+            onRemove={() => remove(index)}
+          />
+        ))}
       </div>
 
       <div>

@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { createModel, deleteModel, editModel } from '../services/model';
+import { createModel, deleteModel, editModel, fetchModelVariants } from '../services/model';
 import { CategoryItem } from '../types/category';
-import { ModelItem } from '../types/model';
+import { ModelItem, ModelVariant } from '../types/model';
 
 export function useCreateModel() {
   const queryClient = useQueryClient();
@@ -95,5 +95,13 @@ export function useDeleteModel() {
         });
       });
     },
+  });
+}
+
+export function useFetchModelVariants({ id }: { id: string }) {
+  return useQuery<Partial<ModelVariant>[]>({
+    queryKey: ['models', id, 'variants'],
+    queryFn: () => fetchModelVariants(id),
+    enabled: !!id,
   });
 }

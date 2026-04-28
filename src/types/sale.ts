@@ -2,22 +2,29 @@ import { CustomerRow } from './customer';
 
 export type SaleStatus = 'paid' | 'pending';
 
-interface SaleItemBase {
-  color: string;
-  print: string;
-  size: string;
+export interface SaleItem {
+  id: string;
+  modelName: string;
+  categoryName: string;
   costPrice: number;
   salePrice: number;
+  quantity: number;
+  variant: {
+    color: string | null;
+    size: string | null;
+  };
 }
 
-export interface SaleItemForm extends SaleItemBase {
+interface SaleItemForm {
   modelId: string;
+  variantId: string;
+  salePrice?: number;
 }
 
-export interface SaleItem extends SaleItemBase {
+export interface SaleInstallment {
   id: string;
-  categoryName: string;
-  modelName: string;
+  value: number;
+  paidAt: string;
 }
 
 export interface SaleInstallmentForm {
@@ -25,39 +32,36 @@ export interface SaleInstallmentForm {
   paidAt: string;
 }
 
-export interface SaleInstallment extends SaleInstallmentForm {
-  id: string;
-}
-
-export interface SaleRow {
-  id: string;
-  status: SaleStatus;
-  purchasedAt: string;
-  itemCount: number;
-  total: number;
-  profit: number;
-  customer: Pick<CustomerRow, 'id' | 'name'> | null;
-}
-
-export interface SaleResponse {
-  pageCount: number;
-  rowCount: number;
-  rows: SaleRow[];
-}
-
 export interface SaleForm {
-  customerId?: string;
-  purchasedAt: string;
+  customerId: string;
   items: SaleItemForm[];
-  installment: SaleInstallmentForm | null;
+  purchasedAt: string;
+  installment?: SaleInstallmentForm;
 }
 
 export interface SaleOverview {
-  customer: Pick<CustomerRow, 'id' | 'name'> | null;
   status: SaleStatus;
   purchasedAt: string;
   total: number;
   totalReceived: number;
   profit: number;
   profitReceived: number;
+  customer: Pick<CustomerRow, 'id' | 'name'>;
+}
+
+export interface SaleRow {
+  id: string;
+  purchasedAt: string;
+  createdAt: string;
+  total: number;
+  profit: number;
+  itemCount: number;
+  status: SaleStatus;
+  customer: Pick<CustomerRow, 'id' | 'name'>;
+}
+
+export interface SaleResponse {
+  pageCount: number;
+  rowCount: number;
+  rows: SaleRow[];
 }
