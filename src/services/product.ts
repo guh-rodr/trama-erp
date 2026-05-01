@@ -7,6 +7,11 @@ interface CreateMutationProps extends ProductForm {
   isCategoryCreation?: boolean;
 }
 
+export async function fetchProduct(id: string) {
+  const response = await api.get(`${API_PATH}/${id}`);
+  return response.data;
+}
+
 export async function createProduct({ category, ...data }: CreateMutationProps) {
   const response = await api.post(API_PATH, { categoryId: category, ...data });
   return response.data;
