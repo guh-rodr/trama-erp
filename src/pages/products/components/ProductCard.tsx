@@ -7,7 +7,7 @@ interface Props {
   onDelete?: () => void;
 }
 
-export function ModelCard({ name, itemsCount, onEdit, onDelete }: Props) {
+export function ProductCard({ name, itemsCount, onEdit, onDelete }: Props) {
   return (
     <div className="relative border border-l-4 border-l-gray-400 border-neutral-200/50 bg-white p-3 rounded-lg shadow group flex gap-4 items-center justify-between min-w-[250px]">
       <div className="flex flex-col m-0">

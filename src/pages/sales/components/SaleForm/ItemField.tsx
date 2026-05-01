@@ -5,7 +5,7 @@ import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../../components/CurrencyInput';
 import { convertToDecimal } from '../../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../../hooks/useCategories';
-import { useFetchModelVariants } from '../../../../hooks/useModels';
+import { useFetchProductVariants } from '../../../../hooks/useProducts';
 import { SaleForm } from '../../../../types/sale';
 import { COLORS } from '../../../../utils/colors';
 
@@ -13,13 +13,13 @@ interface Props {
   index: number;
   control: Control<SaleForm>;
   canRemove: boolean;
-  onToggleModel: (newModelId: string) => void;
+  onToggleProduct: (newProductId: string) => void;
   onAdd: () => void;
   onDuplicate: () => void;
   onRemove: () => void;
 }
 
-export function ItemField({ index, control, canRemove, onToggleModel, onAdd, onDuplicate, onRemove }: Props) {
+export function ItemField({ index, control, canRemove, onToggleProduct, onAdd, onDuplicate, onRemove }: Props) {
   const [categorySearch, setCategorySearch] = useState('');
 
   const { data, status, fetchData } = useCategoriesAutocomplete({
@@ -28,18 +28,18 @@ export function ItemField({ index, control, canRemove, onToggleModel, onAdd, onD
     canFetchModels: true,
   });
 
-  const modelsOptions =
+  const options =
     data?.flatMap((category) =>
-      category.models!.map((model) => ({
-        label: model.name,
-        value: model.id,
+      category.products!.map((product) => ({
+        label: product.name,
+        value: product.id,
         group: category.name,
       })),
     ) ?? [];
 
-  const [modelId, variantId] = useWatch({ control, name: [`items.${index}.modelId`, `items.${index}.variantId`] });
+  const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
 
-  const { data: variants } = useFetchModelVariants({ id: modelId });
+  const { data: variants } = useFetchProductVariants({ id: productId });
 
   const variantsOptions = useMemo(
     () =>
@@ -61,23 +61,23 @@ export function ItemField({ index, control, canRemove, onToggleModel, onAdd, onD
     <div className="flex flex-col gap-1 mt-2 border-b border-neutral-300 pb-2 w-full">
       <div className="flex gap-1 [&>div]:w-full">
         <Controller
-          name={`items.${index}.modelId`}
+          name={`items.${index}.productId`}
           control={control}
-          rules={{ required: 'O modelo é obrigatório' }}
+          rules={{ required: 'O produto é obrigatório' }}
           render={({ field }) => (
             <Autocomplete
               className="!w-full"
               value={field.value}
-              placeholder="Escolha o modelo"
+              placeholder="Escolha o produto"
               status={status}
-              options={modelsOptions}
+              options={options}
               onOpen={fetchData}
               onChangeInput={setCategorySearch}
               onChangeOption={(value) => {
                 field.onChange(value);
 
                 if (field.value !== value) {
-                  onToggleModel(value);
+                  onToggleProduct(value);
                 }
               }}
             />

@@ -14,7 +14,7 @@ interface Props {
   };
 }
 
-export function ModelTypeCard({ title, description, isCurrent, isSelected, mode, onSelect, action }: Props) {
+export function ProductTypeCard({ title, description, isCurrent, isSelected, mode, onSelect, action }: Props) {
   const isSelectMode = mode === 'select';
 
   return (

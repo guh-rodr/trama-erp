@@ -40,7 +40,7 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
   } = useForm<SaleForm>({
     defaultValues: {
       customerId: defaultCustomer?.id,
-      items: [{ modelId: '' }],
+      items: [{ productId: '' }],
       installment: { paidAt: currentDate },
     },
   });
@@ -138,8 +138,8 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
             index={index}
             control={control}
             canRemove={fields.length !== 1}
-            onToggleModel={(newModelId) => update(index, { modelId: newModelId, variantId: '' })}
-            onAdd={() => append({ modelId: '', variantId: '' })}
+            onToggleProduct={(newProductId) => update(index, { productId: newProductId, variantId: '' })}
+            onAdd={() => append({ productId: '', variantId: '' })}
             onDuplicate={() => append(getValues(`items.${index}`))}
             onRemove={() => remove(index)}
           />

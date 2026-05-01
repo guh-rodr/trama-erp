@@ -6,9 +6,13 @@ import { Input } from '../../../components/Input';
 import { Label } from '../../../components/Label';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { useCreateCategory } from '../../../hooks/useCategories';
-import { CreateCategoryForm } from '../../../types/category';
+import { CategoryItem, CreateCategoryForm } from '../../../types/category';
 
-export function CategoryForm() {
+interface Props {
+  onCreate?: (newCategory: CategoryItem) => void;
+}
+
+export function CategoryForm({ onCreate }: Props) {
   const { closeDialog } = useDialog();
   const { mutate, isPending } = useCreateCategory();
 
@@ -20,8 +24,9 @@ export function CategoryForm() {
 
   const onSubmit: SubmitHandler<CreateCategoryForm> = (data) => {
     mutate(data, {
-      onSuccess: () => {
+      onSuccess: (newCategory) => {
         closeDialog();
+        onCreate?.(newCategory);
       },
     });
   };

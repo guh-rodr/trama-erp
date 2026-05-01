@@ -1,9 +1,9 @@
-import { ModelItem } from './model';
+import { ProductItem } from './product';
 
 export interface CategoryItem {
   id: string;
   name: string;
-  models: ModelItem[];
+  products: ProductItem[];
 }
 
 export interface CreateCategoryForm {

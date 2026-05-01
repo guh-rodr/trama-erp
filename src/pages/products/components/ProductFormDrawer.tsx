@@ -10,62 +10,60 @@ import { Label } from '../../../components/Label';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
-import { useCreateModel, useEditModel } from '../../../hooks/useModels';
+import { useCreateProduct, useUpdateProduct } from '../../../hooks/useProducts';
 import { CategoryItem } from '../../../types/category';
-import { ModelForm, ModelItem, ModelVariantForm } from '../../../types/model';
-import { ModelTypeCard } from './ModelTypeCard';
-import { ModelTypeConversion } from './ModelTypeConversion';
-import { ModelVariantsTable } from './ModelVariantsTable';
+import { ProductForm, ProductItem, ProductVariantForm } from '../../../types/product';
+import { ProductTypeCard } from './ProductTypeCard';
+import { ProductTypeConversion } from './ProductTypeConversion';
+import { ProductVariantsTable } from './ProductVariantsTable';
 
 interface Props {
   defaultCategory?: Pick<CategoryItem, 'id' | 'name'>;
-  defaultModel?: ModelItem;
-  onCreate?: (newModel: ModelItem) => void;
+  defaultProduct?: ProductItem;
+  onCreate?: (newProduct: ProductItem) => void;
 }
 
-export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Props) {
-  const isEditMode = !!defaultModel;
+export function ProductFormDrawer({ defaultCategory, defaultProduct, onCreate }: Props) {
+  const isEditMode = !!defaultProduct;
 
   const [categorySearch, setCategorySearch] = useState('');
 
   const { openDialog, closeDialog } = useDialog();
 
-  const { mutate: createModel, isPending: isCreating } = useCreateModel();
-  const { mutate: editModel, isPending: isEditing } = useEditModel();
+  const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
+  const { mutate: updateProduct, isPending: isEditing } = useUpdateProduct();
 
   const isSubmitting = isCreating || isEditing;
 
-  const defaultValues: ModelForm | undefined = useMemo(() => {
-    const defaultVariant: ModelVariantForm = { color: '', size: '', status: 'added' };
+  const defaultValues: ProductForm | undefined = useMemo(() => {
+    const defaultVariant: ProductVariantForm = { color: '', size: '', status: 'added' };
     if (!defaultCategory) return;
 
-    if (defaultModel) {
-      if (defaultModel.isVariable) {
-        const variants = defaultModel.variants.map(
-          ({ hasSales: _hasSales, ...v }): ModelVariantForm => ({
-            ...v,
-            costPrice: convertToDecimal(v.costPrice!),
-            salePrice: convertToDecimal(v.salePrice!),
-            status: 'idle' as const,
-          }),
-        );
+    if (defaultProduct) {
+      if (defaultProduct.isVariable) {
+        const variants = defaultProduct.variants.map(({ hasSales: _hasSales, ...v }) => ({
+          ...v,
+          costPrice: convertToDecimal(v.costPrice!),
+          salePrice: convertToDecimal(v.salePrice!),
+          status: 'idle' as const,
+        }));
 
         return {
-          id: defaultModel.id,
-          type: defaultModel.isVariable ? 'variable' : 'simple',
-          name: defaultModel.name,
+          id: defaultProduct.id,
+          type: defaultProduct.isVariable ? 'variable' : 'simple',
+          name: defaultProduct.name,
           category: defaultCategory.id,
           variants,
         };
       } else {
         return {
-          id: defaultModel.id,
-          type: defaultModel.isVariable ? 'variable' : 'simple',
-          name: defaultModel.name,
+          id: defaultProduct.id,
+          type: defaultProduct.isVariable ? 'variable' : 'simple',
+          name: defaultProduct.name,
           category: defaultCategory.id,
-          costPrice: defaultModel.costPrice ? convertToDecimal(defaultModel.costPrice) : undefined,
-          salePrice: defaultModel.salePrice ? convertToDecimal(defaultModel.salePrice) : undefined,
-          quantity: defaultModel.quantity,
+          costPrice: defaultProduct.costPrice ? convertToDecimal(defaultProduct.costPrice) : undefined,
+          salePrice: defaultProduct.salePrice ? convertToDecimal(defaultProduct.salePrice) : undefined,
+          quantity: defaultProduct.quantity,
           variants: [defaultVariant],
         };
       }
@@ -77,9 +75,9 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         variants: [defaultVariant],
       };
     }
-  }, [defaultModel, defaultCategory]);
+  }, [defaultCategory, defaultProduct]);
 
-  const { control, register, setValue, handleSubmit, getValues, getFieldState, watch } = useForm<ModelForm>({
+  const { control, register, setValue, handleSubmit, getValues, getFieldState, watch } = useForm<ProductForm>({
     defaultValues,
   });
 
@@ -101,13 +99,13 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     ...mappedCategories,
   ];
 
-  const onSubmit: SubmitHandler<ModelForm> = (data) => {
+  const onSubmit: SubmitHandler<ProductForm> = (data) => {
     const onSuccess = () => closeDialog();
 
     if (isEditMode) {
-      editModel(
+      updateProduct(
         {
-          ...(data as Required<ModelForm>),
+          ...(data as Required<ProductForm>),
           variants: type === 'variable' ? (data.variants ?? []) : [],
         },
         { onSuccess },
@@ -116,7 +114,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
       const variantsWithoutStatus =
         type === 'variable' ? data.variants?.map(({ status: _status, ...v }) => ({ ...v })) : [];
 
-      createModel(
+      createProduct(
         { ...data, variants: variantsWithoutStatus, isCategoryCreation: !!categorySearch },
         {
           onSuccess: (resData) => {
@@ -137,12 +135,12 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
   const handleToggleToVariable = () => {
     const toggleToVariable = () => handleToggleType('variable');
 
-    if (isEditMode && !defaultModel.isVariable && defaultModel.itemCount > 0) {
+    if (isEditMode && !defaultProduct.isVariable && defaultProduct.itemCount > 0) {
       openDialog({
         type: 'modal',
         title: 'Habilitar variantes?',
         content: (
-          <ModelTypeConversion onConfirm={toggleToVariable} newType="variable" quantity={defaultModel.quantity} />
+          <ProductTypeConversion onConfirm={toggleToVariable} newType="variable" quantity={defaultProduct.quantity} />
         ),
       });
 
@@ -156,13 +154,13 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     const toggleToSimple = () => handleToggleType('simple');
 
     const totalStockQuantity =
-      (defaultModel?.isVariable ? defaultModel.variants.reduce((acc, curr) => acc + curr.quantity, 0) : 0) ?? 0;
+      (defaultProduct?.isVariable ? defaultProduct.variants.reduce((acc, curr) => acc + curr.quantity, 0) : 0) ?? 0;
 
     if (isEditMode && totalStockQuantity > 0) {
       openDialog({
         type: 'modal',
         title: 'Desabilitar variantes?',
-        content: <ModelTypeConversion onConfirm={toggleToSimple} newType="simple" quantity={totalStockQuantity} />,
+        content: <ProductTypeConversion onConfirm={toggleToSimple} newType="simple" quantity={totalStockQuantity} />,
       });
 
       return;
@@ -171,7 +169,7 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
     toggleToSimple();
   };
 
-  const handleToggleType = (newValue: ModelForm['type']) => {
+  const handleToggleType = (newValue: ProductForm['type']) => {
     if (type === newValue) return;
     setValue('type', newValue);
   };
@@ -216,10 +214,10 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         </div>
 
         <div>
-          <Label htmlFor="model" required>
-            {isEditMode ? 'Modelo' : 'Novo modelo'}
+          <Label htmlFor="name" required>
+            {isEditMode ? 'Produto' : 'Novo produto'}
           </Label>
-          <Input id="model" {...register('name', { required: 'O modelo é obrigatório.' })} />
+          <Input id="name" {...register('name', { required: 'O Produto é obrigatório.' })} />
         </div>
 
         <div>
@@ -228,20 +226,20 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
               <Label required>Tipo</Label>
 
               <div className="flex gap-4">
-                <ModelTypeCard
-                  title="Modelo simples"
+                <ProductTypeCard
+                  title="Produto simples"
                   description="Peça única, sem variação de cor ou tamanho"
-                  isCurrent={!defaultModel.isVariable}
+                  isCurrent={!defaultProduct.isVariable}
                   isSelected={type === 'simple'}
                   mode="static"
                   action={
                     type === 'variable' ? { label: 'Converter para simples', onClick: handleToggleToSimple } : undefined
                   }
                 />
-                <ModelTypeCard
-                  title="Modelo variado"
+                <ProductTypeCard
+                  title="Produto variado"
                   description="Possui cor, tamanho ou outras combinações"
-                  isCurrent={defaultModel.isVariable}
+                  isCurrent={defaultProduct.isVariable}
                   isSelected={type === 'variable'}
                   mode="static"
                   action={
@@ -255,16 +253,16 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
               <Label required>Tipo</Label>
 
               <div className="flex gap-4">
-                <ModelTypeCard
-                  title="Modelo simples"
+                <ProductTypeCard
+                  title="Produto simples"
                   description="Peça única, sem variação de cor ou tamanho"
                   mode="select"
                   onSelect={() => handleToggleType('simple')}
                   isCurrent={type === 'simple'}
                   isSelected={type === 'simple'}
                 />
-                <ModelTypeCard
-                  title="Modelo variado"
+                <ProductTypeCard
+                  title="Produto variado"
                   description="Possui cor, tamanho ou outras combinações"
                   onSelect={() => handleToggleType('variable')}
                   mode="select"
@@ -316,9 +314,9 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
                 className="disabled:border-neutral-300"
                 id="quantity"
                 type="number"
-                disabled={isEditMode && !defaultModel.isVariable}
+                disabled={isEditMode && !defaultProduct.isVariable}
                 title={
-                  isEditMode && !defaultModel.isVariable ? 'Não é possível alterar a quantidade por aqui' : undefined
+                  isEditMode && !defaultProduct.isVariable ? 'Não é possível alterar a quantidade por aqui' : undefined
                 }
                 {...register('quantity', {
                   required: !isEditMode,
@@ -330,10 +328,10 @@ export function ModelFormDrawer({ defaultCategory, defaultModel, onCreate }: Pro
         )}
 
         {type === 'variable' && (
-          <ModelVariantsTable
+          <ProductVariantsTable
             control={control}
-            inEditMode={!!defaultModel}
-            variants={defaultModel?.isVariable ? defaultModel.variants : []}
+            inEditMode={!!defaultProduct}
+            variants={defaultProduct?.isVariable ? defaultProduct.variants : []}
             setValue={setValue}
             getValues={getValues}
             getFieldState={getFieldState}

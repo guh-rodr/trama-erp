@@ -9,11 +9,11 @@ export const MODULES = [
     href: '/dashboard/customers',
   },
   {
-    key: 'categories',
-    name: 'Categorias e Modelos',
-    description: 'Definição de grupos e tipos de produtos',
+    key: 'products',
+    name: 'Produtos',
+    description: 'Definição de grupos e controle de produtos',
     icon: StackIcon,
-    href: '/dashboard/categories',
+    href: '/dashboard/products',
   },
   {
     key: 'sales',

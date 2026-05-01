@@ -6,8 +6,8 @@ import { usePageTitle } from '../../hooks/usePageTitle';
 import { CategoriesList } from './components/CategoriesList';
 import { CategoryForm } from './components/CategoryForm';
 
-export function CategoriesPage() {
-  usePageTitle('Categorias e Modelos');
+export function ProductsPage() {
+  usePageTitle('Produtos');
 
   const { openDialog } = useDialog();
 
@@ -20,11 +20,11 @@ export function CategoriesPage() {
   };
 
   return (
-    <DashboardLayout title="Categorias">
+    <DashboardLayout title="Produtos">
       <div className="flex justify-end">
         <Button type="button" onClick={openCategoryForm}>
           <PlusIcon weight="bold" size={15} />
-          Nova categoria
+          Novo produto
         </Button>
       </div>
       <CategoriesList />

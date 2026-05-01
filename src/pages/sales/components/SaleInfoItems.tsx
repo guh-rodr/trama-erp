@@ -56,7 +56,7 @@ export function SaleInfoItems({ id }: Props) {
                           {item.categoryName}
                         </span>
 
-                        <span className="font-medium">{item.modelName}</span>
+                        <span className="font-medium">{item.productName}</span>
                       </div>
 
                       <span className="pt-0.5 text-[15px] font-medium">

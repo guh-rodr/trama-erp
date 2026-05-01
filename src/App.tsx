@@ -8,9 +8,9 @@ import { ProtectedRoute } from './pages/auth/components/ProtectedRoute';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { CashflowPage } from './pages/cashflow/Page';
-import { CategoriesPage } from './pages/categories/Page';
 import { CustomersPage } from './pages/customers/Page';
 import { HomePage } from './pages/home/Page';
+import { ProductsPage } from './pages/products/Page';
 import { SalesPage } from './pages/sales/Page';
 import { StatsPage } from './pages/stats/Page';
 
@@ -66,10 +66,10 @@ function App() {
                 }
               />
               <Route
-                path="/dashboard/categories"
+                path="/dashboard/products"
                 element={
                   <ProtectedRoute>
-                    <CategoriesPage />
+                    <ProductsPage />
                   </ProtectedRoute>
                 }
               />

@@ -7,7 +7,7 @@ interface Props {
   quantity?: number;
 }
 
-export function ModelTypeConversion({ onConfirm, newType, quantity }: Props) {
+export function ProductTypeConversion({ onConfirm, newType, quantity }: Props) {
   const { closeDialog } = useDialog();
 
   return (
@@ -15,13 +15,13 @@ export function ModelTypeConversion({ onConfirm, newType, quantity }: Props) {
       {newType === 'variable' && (
         <div className="space-y-3">
           <p>
-            Esse modelo atualmente possui <strong>{quantity} und.</strong> em estoque. Ao confirmar, as seguintes ações
+            Esse produto atualmente possui <strong>{quantity} und.</strong> em estoque. Ao confirmar, as seguintes ações
             serão feitas:
           </p>
 
           <p>
-            • O estoque do modelo atual será zerado
-            <br />• O modelo atual será arquivado permantenemente
+            • O estoque do produto atual será zerado
+            <br />• O produto atual será arquivado permantenemente
           </p>
 
           <p>Essa operação não poderá ser desfeita.</p>
@@ -31,7 +31,7 @@ export function ModelTypeConversion({ onConfirm, newType, quantity }: Props) {
       {newType === 'simple' && (
         <div className="space-y-3">
           <p>
-            Esse modelo possui variantes com estoque ativo, totalizando <strong>{quantity} und.</strong> Ao confirmar,
+            Esse produto possui variantes com estoque ativo, totalizando <strong>{quantity} und.</strong> Ao confirmar,
             as seguintes ações serão feitas:
           </p>
           <p>

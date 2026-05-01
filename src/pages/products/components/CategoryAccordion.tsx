@@ -5,11 +5,11 @@ import toast from 'react-hot-toast';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { useEditCategory } from '../../../hooks/useCategories';
 import { CategoryItem, EditCategoryForm } from '../../../types/category';
-import { ModelItem } from '../../../types/model';
+import { ProductItem } from '../../../types/product';
 import { CategoryDeleteModal } from './CategoryDeleteModal';
-import { ModelCard } from './ModelCard';
-import { ModelDeleteModal } from './ModelDeleteModal';
-import { ModelFormDrawer } from './ModelFormDrawer';
+import { ProductCard } from './ProductCard';
+import { ProductDeleteModal } from './ProductDeleteModal';
+import { ProductFormDrawer } from './ProductFormDrawer';
 
 interface Props {
   category: CategoryItem;
@@ -27,20 +27,20 @@ export function CategoryAccordion({
   handleClickCategory,
 }: Props) {
   const { openDialog } = useDialog();
-  const [models, setModels] = useState<ModelItem[]>([]);
+  const [products, setProducts] = useState<ProductItem[]>([]);
 
-  const fetchedModels = category.models!;
+  const fetchedProducts = category.products!;
 
   useEffect(() => {
-    const registeredModels = fetchedModels.map((m) => ({
+    const registeredProducts = fetchedProducts.map((m) => ({
       ...m,
       isTemp: false,
     }));
 
-    setModels(registeredModels);
-  }, [category.models, fetchedModels]);
+    setProducts(registeredProducts);
+  }, [category.products, fetchedProducts]);
 
-  const openDeleteModal = (rowId: string, rowName: string) => {
+  const openDeleteCategory = (rowId: string, rowName: string) => {
     openDialog({
       title: 'Confirmar ação',
       type: 'modal',
@@ -48,11 +48,11 @@ export function CategoryAccordion({
     });
   };
 
-  const handleAddModel = () => {
+  const handleAddProduct = () => {
     openDialog({
       type: 'drawer',
-      title: 'Adicionar novo modelo',
-      content: <ModelFormDrawer defaultCategory={category} />,
+      title: 'Adicionar novo produto',
+      content: <ProductFormDrawer defaultCategory={category} />,
     });
   };
 
@@ -77,19 +77,19 @@ export function CategoryAccordion({
     );
   };
 
-  const openModelDeleteModal = (modelId: string, modelName: string) => {
+  const openProductDeleteModal = (productId: string, productName: string) => {
     openDialog({
       title: 'Confirmar ação',
       type: 'modal',
-      content: <ModelDeleteModal categoryId={category.id} modelId={modelId} modelName={modelName} />,
+      content: <ProductDeleteModal productId={productId} productName={productName} />,
     });
   };
 
-  const handleEditModel = (model: ModelItem) => {
+  const handleEditProduct = (product: ProductItem) => {
     openDialog({
       type: 'drawer',
-      title: 'Editar modelo',
-      content: <ModelFormDrawer defaultCategory={category} defaultModel={model} />,
+      title: 'Editar produto',
+      content: <ProductFormDrawer defaultCategory={category} defaultProduct={product} />,
     });
   };
 
@@ -151,7 +151,7 @@ export function CategoryAccordion({
         )}
 
         <p className="text-sm text-neutral-500">
-          {fetchedModels.length || 'Nenhum'} {fetchedModels.length > 1 ? 'modelos' : 'modelo'}
+          {fetchedProducts.length || 'Nenhum'} {fetchedProducts.length > 1 ? 'produtos' : 'produto'}
         </p>
 
         <CaretRightIcon
@@ -163,15 +163,15 @@ export function CategoryAccordion({
 
       {category.id === expandedCategoryId && (
         <div className={`p-4 flex flex-col gap-4 border-t border-y-neutral-200`}>
-          {!!models.length && (
+          {!!products.length && (
             <div className="flex flex-wrap gap-4">
-              {models.map((model) => (
-                <ModelCard
-                  key={model.id}
-                  name={model.name}
-                  itemsCount={model.itemCount}
-                  onEdit={() => handleEditModel(model)}
-                  onDelete={() => openModelDeleteModal(model.id, model.name)}
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  itemsCount={product.itemCount}
+                  onEdit={() => handleEditProduct(product)}
+                  onDelete={() => openProductDeleteModal(product.id, product.name)}
                 />
               ))}
             </div>
@@ -180,16 +180,16 @@ export function CategoryAccordion({
           <div className="flex items-center gap-2 text-sm">
             <button
               type="button"
-              onClick={handleAddModel}
+              onClick={handleAddProduct}
               className="flex items-center gap-1 text-emerald-500 enabled:hover:bg-emerald-100/50 p-1 rounded-md transition-all disabled:opacity-30"
             >
               <PlusIcon weight="bold" size={14} />
-              Novo modelo
+              Novo produto
             </button>
 
             <button
               type="button"
-              onClick={() => openDeleteModal(category.id, category.name)}
+              onClick={() => openDeleteCategory(category.id, category.name)}
               className="flex items-center gap-1 text-red-500 hover:bg-red-100/50 p-1 rounded-md transition-colors"
             >
               <TrashIcon weight="bold" size={14} />

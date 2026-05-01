@@ -4,7 +4,7 @@ export type SaleStatus = 'paid' | 'pending';
 
 export interface SaleItem {
   id: string;
-  modelName: string;
+  productName: string;
   categoryName: string;
   costPrice: number;
   salePrice: number;
@@ -16,7 +16,7 @@ export interface SaleItem {
 }
 
 interface SaleItemForm {
-  modelId: string;
+  productId: string;
   variantId: string;
   salePrice?: number;
 }

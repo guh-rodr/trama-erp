@@ -11,20 +11,20 @@ import toast from 'react-hot-toast';
 import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
-import { ModelForm, ModelVariant } from '../../../types/model';
+import { ProductForm, ProductVariant } from '../../../types/product';
 import { COLORS } from '../../../utils/colors';
 import { SIZES } from '../../../utils/sizes';
 
 interface Props {
-  control: Control<ModelForm>;
+  control: Control<ProductForm>;
   inEditMode?: boolean;
-  variants: ModelVariant[];
-  getValues: UseFormGetValues<ModelForm>;
-  setValue: UseFormSetValue<ModelForm>;
-  getFieldState: UseFormGetFieldState<ModelForm>;
+  variants: ProductVariant[];
+  getValues: UseFormGetValues<ProductForm>;
+  setValue: UseFormSetValue<ProductForm>;
+  getFieldState: UseFormGetFieldState<ProductForm>;
 }
 
-export function ModelVariantsTable({
+export function ProductVariantsTable({
   control,
   inEditMode = false,
   variants,
@@ -53,13 +53,13 @@ export function ModelVariantsTable({
     append({ color: '', size: '', status: 'added' }, { shouldFocus: false });
   };
 
-  const handleRemoveVariant = (index: number, fieldVariant: NonNullable<ModelForm['variants']>[number]) => {
+  const handleRemoveVariant = (index: number, fieldVariant: NonNullable<ProductForm['variants']>[number]) => {
     const canMarkAsRemoved = ['idle', 'updated'].includes(fieldVariant.status!);
     if (inEditMode && canMarkAsRemoved) {
       const markAsRemoved = () => update(index, { ...fieldVariant, status: 'removed' });
       if (getValues('variants')?.filter((f) => f.status !== 'removed').length === 1) {
         toast(
-          'Não é possível remover ou arquivar a última variante ativa.\n\nConverta para modelo simples se necessário.',
+          'Não é possível remover ou arquivar a última variante ativa.\n\nConverta para produto simples se necessário.',
         );
         return;
       }
@@ -69,7 +69,7 @@ export function ModelVariantsTable({
     }
   };
 
-  const handleUndoVariantRemove = (index: number, fieldVariant: NonNullable<ModelForm['variants']>[number]) => {
+  const handleUndoVariantRemove = (index: number, fieldVariant: NonNullable<ProductForm['variants']>[number]) => {
     update(index, { ...fieldVariant, status: 'idle' });
   };
 
