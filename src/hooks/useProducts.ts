@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { createProduct, deleteProduct, fetchProduct, fetchProductVariants, updateProduct } from '../services/product';
+import { FilterForm } from '../components/Filter/Filter';
+import {
+  createProduct,
+  deleteProduct,
+  fetchProduct,
+  fetchProductVariants,
+  fetchTableProducts,
+  updateProduct,
+} from '../services/product';
 import { CategoryItem } from '../types/category';
-import { ProductItem, ProductVariant } from '../types/product';
+import { ProductItem, ProductResponse, ProductVariant } from '../types/product';
 import { useTableParams } from './useTableParams';
 
 export function useFetchProduct({ id }: { id: string }) {
@@ -10,6 +18,15 @@ export function useFetchProduct({ id }: { id: string }) {
     queryKey: ['products', id],
     queryFn: () => fetchProduct(id),
     enabled: !!id,
+  });
+}
+
+export function useFetchTableProducts(filter: FilterForm) {
+  const { params } = useTableParams();
+
+  return useQuery<ProductResponse>({
+    queryKey: ['products/list', { ...params, filter }],
+    queryFn: () => fetchTableProducts(params, filter),
   });
 }
 

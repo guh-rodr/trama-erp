@@ -1,3 +1,5 @@
+import { FilterForm } from '../components/Filter/Filter';
+import { TableParams } from '../hooks/useTableParams';
 import { api } from '../lib/api';
 import { ProductForm } from '../types/product';
 
@@ -9,6 +11,11 @@ interface CreateMutationProps extends ProductForm {
 
 export async function fetchProduct(id: string) {
   const response = await api.get(`${API_PATH}/${id}`);
+  return response.data;
+}
+
+export async function fetchTableProducts(params: TableParams, filter: FilterForm) {
+  const response = await api.post(`${API_PATH}/list`, filter, { params });
   return response.data;
 }
 
