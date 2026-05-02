@@ -7,10 +7,11 @@ import { Button } from '../../../components/Button';
 import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
 import { Label } from '../../../components/Label';
+import { LoadingNotification } from '../../../components/LoadingNotification';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
-import { useCreateProduct, useUpdateProduct } from '../../../hooks/useProducts';
+import { useCreateProduct, useFetchProduct, useUpdateProduct } from '../../../hooks/useProducts';
 import { CategoryItem } from '../../../types/category';
 import { ProductForm, ProductItem, ProductVariantForm } from '../../../types/product';
 import { ProductTypeCard } from './ProductTypeCard';
@@ -19,11 +20,13 @@ import { ProductVariantsTable } from './ProductVariantsTable';
 
 interface Props {
   defaultCategory?: Pick<CategoryItem, 'id' | 'name'>;
-  defaultProduct?: ProductItem;
+  defaultProductId?: string;
   onCreate?: (newProduct: ProductItem) => void;
 }
 
-export function ProductFormDrawer({ defaultCategory, defaultProduct, onCreate }: Props) {
+export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCreate }: Props) {
+  const { data: defaultProduct, isFetching } = useFetchProduct({ id: defaultProductId });
+
   const isEditMode = !!defaultProduct;
 
   const [categorySearch, setCategorySearch] = useState('');
@@ -78,7 +81,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProduct, onCreate }:
   }, [defaultCategory, defaultProduct]);
 
   const { control, register, setValue, handleSubmit, getValues, getFieldState, watch } = useForm<ProductForm>({
-    defaultValues,
+    values: defaultValues,
   });
 
   const type = watch('type');
@@ -173,6 +176,10 @@ export function ProductFormDrawer({ defaultCategory, defaultProduct, onCreate }:
     if (type === newValue) return;
     setValue('type', newValue);
   };
+
+  if (isFetching) {
+    return <LoadingNotification />;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col justify-between gap-4 h-full">
