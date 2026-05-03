@@ -14,6 +14,7 @@ import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
 import { useCreateProduct, useFetchProduct, useUpdateProduct } from '../../../hooks/useProducts';
 import { CategoryItem } from '../../../types/category';
 import { ProductForm, ProductItem, ProductVariantForm } from '../../../types/product';
+import { CategoryForm } from './CategoryForm';
 import { ProductTypeCard } from './ProductTypeCard';
 import { ProductTypeConversion } from './ProductTypeConversion';
 import { ProductVariantsTable } from './ProductVariantsTable';
@@ -92,7 +93,15 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
     canFetchModels: false,
   });
 
-  const handleAddCategory = () => setValue('category', categorySearch);
+  const openCategoryForm = () => {
+    const updateCategory = (id: string) => setValue('category', id);
+
+    openDialog({
+      title: 'Adicionar nova categoria',
+      type: 'modal',
+      content: <CategoryForm onCreate={({ id }) => updateCategory(id)} />,
+    });
+  };
 
   const mappedCategories = categories ? categories.map((c) => ({ label: c.name, value: c.id })) : [];
   const options = [
@@ -199,7 +208,6 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
                 value={field.value}
                 disabled={isEditMode}
                 className="disabled:border-neutral-300"
-                showActionsOnEmpty
                 status={status}
                 options={options}
                 onChangeInput={setCategorySearch}
@@ -211,7 +219,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
                   </span>
                 )}
               >
-                <Autocomplete.Action onClick={handleAddCategory}>
+                <Autocomplete.Action onClick={openCategoryForm}>
                   <PlusIcon weight="bold" />
                   Adicionar categoria
                 </Autocomplete.Action>
