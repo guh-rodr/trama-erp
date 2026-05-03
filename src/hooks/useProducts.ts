@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 import { FilterForm } from '../components/Filter/Filter';
 import {
   createProduct,
@@ -9,7 +10,6 @@ import {
   fetchTableProducts,
   updateProduct,
 } from '../services/product';
-import { CategoryItem } from '../types/category';
 import { ProductItem, ProductResponse, ProductVariant } from '../types/product';
 import { useTableParams } from './useTableParams';
 
@@ -63,24 +63,32 @@ export function useUpdateProduct() {
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const {
+    params: { page },
+  } = useTableParams();
 
   return useMutation({
     mutationFn: deleteProduct,
-    onSuccess: ({ data }) => {
+    onSuccess: () => {
       toast.success('Produto excluído com sucesso!');
 
-      queryClient.setQueryData(['categories'], (previous: CategoryItem[]) => {
-        return previous.map((cat) => {
-          if (cat.id === data.categoryId) {
-            return {
-              ...cat,
-              products: cat.products!.filter((m) => m.id !== data.id),
-            };
-          } else {
-            return cat;
-          }
-        });
+      const queries = queryClient.getQueriesData<ProductResponse>({
+        queryKey: ['products/list', { page }],
+        type: 'active',
       });
+
+      const isLastItemOnPage = queries.some(([, data]) => data?.rows?.length === 1);
+      const canGoBackPage = page > 1 && isLastItemOnPage;
+
+      if (canGoBackPage) {
+        queryClient.invalidateQueries({ queryKey: ['products/list', { page: page - 1 }] }).then(() => {
+          navigate(`?page=${page - 1}`);
+        });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['products/list'] });
+      }
     },
   });
 }

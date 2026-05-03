@@ -9,6 +9,7 @@ import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { useFetchTableProducts } from '../../../hooks/useProducts';
 import { useTableHelper } from '../../../hooks/useTableHelper';
 import { CategoryItem } from '../../../types/category';
+import { ProductDeleteModal } from './ProductDeleteModal';
 import { ProductFormDrawer } from './ProductFormDrawer';
 import { getProductsColumns } from './ProductsColumns';
 
@@ -29,8 +30,16 @@ export function ProductsTable({ filter, selectedRows, onSelectionChange }: Props
     });
   };
 
+  const onDelete = (rowId: string, rowName: string) => {
+    openDialog({
+      title: 'Confirmação',
+      type: 'modal',
+      content: <ProductDeleteModal productId={rowId} productName={rowName} />,
+    });
+  };
+
   const { data, isFetching, isError, refetch } = useFetchTableProducts(filter);
-  const columns = useMemo(() => getProductsColumns({ onEdit }), []);
+  const columns = useMemo(() => getProductsColumns({ onEdit, onDelete }), []);
 
   const table = useTableHelper({
     columns,

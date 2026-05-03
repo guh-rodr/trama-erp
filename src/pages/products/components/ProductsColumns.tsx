@@ -1,4 +1,4 @@
-import { PencilIcon } from '@phosphor-icons/react';
+import { PencilIcon, TrashSimpleIcon } from '@phosphor-icons/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '../../../components/Checkbox';
 import { formatToReal } from '../../../functions/currency';
@@ -7,6 +7,7 @@ import { ProductRow } from '../../../types/product';
 
 export const getProductsColumns = (actions: {
   onEdit: (rowId: string, category: Pick<CategoryItem, 'id' | 'name'>) => void;
+  onDelete: (rowId: string, rowName: string) => void;
 }): ColumnDef<ProductRow>[] => [
   {
     id: 'select',
@@ -81,6 +82,14 @@ export const getProductsColumns = (actions: {
           className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-emerald-500 hover:text-white transition-colors"
         >
           <PencilIcon weight="bold" size={16} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => actions.onDelete(row.original.id, row.original.name)}
+          className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-red-500 hover:text-white transition-colors"
+        >
+          <TrashSimpleIcon weight="bold" size={16} />
         </button>
       </div>
     ),
