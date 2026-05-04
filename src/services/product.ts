@@ -40,3 +40,8 @@ export async function deleteProduct(id: string) {
   const response = await api.delete(`${API_PATH}/${id}`);
   return response.data;
 }
+
+export async function bulkDeleteProducts(ids: string[]) {
+  const response = await api.post(`${API_PATH}/bulk-delete`, { ids });
+  return response.data;
+}

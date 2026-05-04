@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import { FilterForm } from '../components/Filter/Filter';
 import {
+  bulkDeleteProducts,
   createProduct,
   deleteProduct,
   fetchProduct,
@@ -73,6 +74,38 @@ export function useDeleteProduct() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       toast.success('Produto excluído com sucesso!');
+
+      const queries = queryClient.getQueriesData<ProductResponse>({
+        queryKey: ['products/list', { page }],
+        type: 'active',
+      });
+
+      const isLastItemOnPage = queries.some(([, data]) => data?.rows?.length === 1);
+      const canGoBackPage = page > 1 && isLastItemOnPage;
+
+      if (canGoBackPage) {
+        queryClient.invalidateQueries({ queryKey: ['products/list', { page: page - 1 }] }).then(() => {
+          navigate(`?page=${page - 1}`);
+        });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['products/list'] });
+      }
+    },
+  });
+}
+
+export function useBulkDeleteProducts() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const {
+    params: { page },
+  } = useTableParams();
+
+  return useMutation({
+    mutationFn: bulkDeleteProducts,
+    onSuccess: () => {
+      toast.success('Produtos excluídos com sucesso!');
 
       const queries = queryClient.getQueriesData<ProductResponse>({
         queryKey: ['products/list', { page }],
