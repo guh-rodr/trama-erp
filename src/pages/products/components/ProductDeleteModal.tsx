@@ -1,34 +1,45 @@
 import { Button } from '../../../components/Button';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useDeleteProduct } from '../../../hooks/useProducts';
+import { useBulkDeleteProducts, useDeleteProduct } from '../../../hooks/useProducts';
 
 interface Props {
-  productId: string;
-  productName: string;
+  onDelete?: () => void;
+  ids: string[];
 }
 
-export function ProductDeleteModal({ productId, productName }: Props) {
+export function ProductDeleteModal({ onDelete, ids }: Props) {
   const { closeDialog } = useDialog();
-  const { mutate, isPending } = useDeleteProduct();
+  const { mutate: deleteProductMutate, isPending: isPendingDelete } = useDeleteProduct();
+  const { mutate: bulkDeleteProductsMutate, isPending: isPendingBulkDelete } = useBulkDeleteProducts();
+
+  const isBulkDelete = ids.length > 1;
 
   const handleConfirm = () => {
-    mutate(productId, {
-      onSuccess: () => {
-        closeDialog();
-      },
-    });
+    if (isBulkDelete) {
+      bulkDeleteProductsMutate(ids, {
+        onSuccess: () => {
+          onDelete?.();
+          closeDialog();
+        },
+      });
+    } else {
+      deleteProductMutate(ids[0], {
+        onSuccess: () => {
+          onDelete?.();
+          closeDialog();
+        },
+      });
+    }
   };
 
   return (
     <div className="space-y-12">
       <div className="space-y-3">
         <p>
-          Tem certeza que deseja remover <strong>{productName}</strong>?
+          {isBulkDelete
+            ? `Tem certeza que deseja remover ${ids.length} produtos?`
+            : `Tem certeza que deseja remover esse cliente?`}
         </p>
-
-        <span className="bg-amber-200/50 block h- px-2 text-amber-600 py-2 rounded-md border-l-3 border-amber-500 text-sm">
-          Todos os dados e estatísticas relacionados a esse produto serão automaticamente removidos ao confirmar.
-        </span>
       </div>
 
       <div className="flex items-center justify-between gap-2 !space-y-0">
@@ -36,7 +47,7 @@ export function ProductDeleteModal({ productId, productName }: Props) {
           Cancelar
         </Button>
 
-        <Button type="button" isLoading={isPending} onClick={handleConfirm}>
+        <Button type="button" isLoading={isPendingDelete || isPendingBulkDelete} onClick={handleConfirm}>
           Confirmar
         </Button>
       </div>

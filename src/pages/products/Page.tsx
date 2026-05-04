@@ -11,6 +11,7 @@ import { useCategoriesAutocomplete } from '../../hooks/useCategories';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { FilterFieldProps } from '../../types/filters';
+import { ProductDeleteModal } from './components/ProductDeleteModal';
 import { ProductFormDrawer } from './components/ProductFormDrawer';
 import { ProductsTable } from './components/ProductsTable';
 
@@ -56,8 +57,18 @@ export function ProductsPage() {
     });
   };
 
+  const selectedRowsId = Object.keys(selectedRows);
+
   const clearSelectedRows = () => {
     setSelectedRows({});
+  };
+
+  const onDeleteSelectedRows = () => {
+    openDialog({
+      title: 'Confirmar ação',
+      type: 'modal',
+      content: <ProductDeleteModal onDelete={clearSelectedRows} ids={selectedRowsId} />,
+    });
   };
 
   const handleSearch = () => {
@@ -75,6 +86,8 @@ export function ProductsPage() {
           <SearchBar placeholder="Buscar por nome" onSearch={handleSearch} />
 
           <Filter {...filter} fields={PRODUCTS_FILTER_FIELDS} onApplyFilter={clearSelectedRows} />
+
+          <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
 
         <PageActions.Section>
