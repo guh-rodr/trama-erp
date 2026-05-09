@@ -1,16 +1,19 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { format, parseISO } from 'date-fns';
 import { Button } from '../../components/Button';
 import { DashboardLayout } from '../../components/DashboardLayout';
 import { Filter } from '../../components/Filter/Filter';
 import { PageActions } from '../../components/PageActions/PageActions';
 import { SearchBar } from '../../components/SearchBar';
 import { useDialog } from '../../contexts/dialog/dialog-context';
+import { convertToDecimal } from '../../functions/currency';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useRowSelection } from '../../hooks/useRowSelection';
 import { FilterFieldProps } from '../../types/filters';
+import { TransactionRow } from '../../types/transaction';
 import { TRANSACTION_CATEGORIES } from '../../utils/transactionCategories';
+import { SaleInfoDrawer } from '../sales/components/SaleInfoDrawer';
 import { CashflowTable } from './components/CashflowTable';
 import { TransactionDeleteModal } from './components/TransactionDeleteModal';
 import { TransactionForm } from './components/TransactionForm';
@@ -25,7 +28,7 @@ const OUTFLOW_CATEGORIES = TRANSACTION_CATEGORIES['outflow'].map((cat) => ({
   group: 'Saídas',
 }));
 
-const CASHFLOW_FILTER_FIELDS: FilterFieldProps[] = [
+const filterFields: FilterFieldProps[] = [
   {
     key: 'description',
     label: 'Descrição',
@@ -56,25 +59,17 @@ const CASHFLOW_FILTER_FIELDS: FilterFieldProps[] = [
 export function CashflowPage() {
   usePageTitle('Fluxo de Caixa');
 
-  const [selectedRows, setSelectedRows] = useState({});
-
+  const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
   const filter = useFilter();
-  const { resetFilter, appliedFilter, applyFilter } = filter;
 
   const openTransactionForm = () => {
     openDialog({
       title: 'Adicionar nova transação',
       type: 'modal',
-      content: <TransactionForm onCreate={resetFilter} />,
+      content: <TransactionForm onCreate={filter.resetFilter} />,
     });
-  };
-
-  const selectedRowsId = Object.keys(selectedRows);
-
-  const clearSelectedRows = () => {
-    setSelectedRows({});
   };
 
   const onDeleteSelectedRows = () => {
@@ -85,21 +80,43 @@ export function CashflowPage() {
     });
   };
 
-  const handleSearch = () => {
-    if (appliedFilter.filters.length) {
-      applyFilter({ filters: [], logical: 'AND' });
+  const onEdit = (data: TransactionRow) => {
+    const defaultValues: TransactionRow = {
+      ...data,
+      value: convertToDecimal(data.value),
+      date: format(parseISO(data.date), 'yyyy-MM-dd'),
+    };
 
-      toast('Os filtros aplicados foram removidos', { position: 'top-right' });
-    }
+    openDialog({
+      title: 'Editar informações da transação',
+      type: 'modal',
+      content: <TransactionForm defaultValues={defaultValues} />,
+    });
+  };
+
+  const onDelete = (id: string, isSale: boolean) => {
+    openDialog({
+      title: 'Confirmar ação',
+      type: 'modal',
+      content: <TransactionDeleteModal ids={[id]} isSale={isSale} />,
+    });
+  };
+
+  const onViewSaleInfo = (saleId: string) => {
+    openDialog({
+      title: 'Informações da venda',
+      type: 'drawer',
+      content: <SaleInfoDrawer id={saleId} />,
+    });
   };
 
   return (
     <DashboardLayout title="Fluxo de Caixa">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por descrição..." onSearch={handleSearch} />
+          <SearchBar placeholder="Buscar por descrição..." onSearch={filter.resetFilter} />
 
-          <Filter {...filter} fields={CASHFLOW_FILTER_FIELDS} onApplyFilter={clearSelectedRows} />
+          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -112,7 +129,14 @@ export function CashflowPage() {
         </PageActions.Section>
       </PageActions>
 
-      <CashflowTable filter={appliedFilter} selectedRows={selectedRows} onSelectionChange={setSelectedRows} />
+      <CashflowTable
+        filter={filter.appliedFilter}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        onEdit={onEdit}
+        onViewSaleInfo={onViewSaleInfo}
+        onDelete={onDelete}
+      />
     </DashboardLayout>
   );
 }

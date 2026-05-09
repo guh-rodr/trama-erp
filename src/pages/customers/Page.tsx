@@ -1,6 +1,4 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
 import { Button } from '../../components/Button';
 import { DashboardLayout } from '../../components/DashboardLayout';
 import { Filter } from '../../components/Filter/Filter';
@@ -9,12 +7,16 @@ import { SearchBar } from '../../components/SearchBar';
 import { useDialog } from '../../contexts/dialog/dialog-context';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useRowSelection } from '../../hooks/useRowSelection';
+import { CustomerForm, CustomerRow } from '../../types/customer';
 import { FilterFieldProps } from '../../types/filters';
+import { SaleFormDrawer } from '../sales/components/SaleForm/SaleForm';
 import { CustomerDeleteModal } from './components/CustomerDeleteModal';
 import { CustomerFormModal } from './components/CustomerFormModal';
+import { CustomerInfoDrawer } from './components/CustomerInfoDrawer';
 import { CustomersTable } from './components/CustomersTable';
 
-const CUSTOMERS_FILTER_FIELDS: FilterFieldProps[] = [
+const filterFields: FilterFieldProps[] = [
   {
     key: 'name',
     label: 'Nome',
@@ -45,25 +47,56 @@ const CUSTOMERS_FILTER_FIELDS: FilterFieldProps[] = [
 export function CustomersPage() {
   usePageTitle('Clientes');
 
-  const [selectedRows, setSelectedRows] = useState({});
-
+  const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
   const filter = useFilter();
-  const { resetFilter, appliedFilter, applyFilter } = filter;
+
+  const onEdit = (data: CustomerRow) => {
+    const defaultValues: CustomerForm = {
+      id: data.id,
+      name: data.name,
+      phone: data.phone,
+      note: data.note,
+    };
+
+    openDialog({
+      title: 'Editar informações do cliente',
+      type: 'modal',
+      content: <CustomerFormModal creationQueryType="list" defaultValues={defaultValues} />,
+    });
+  };
+
+  const onViewInfo = (rowId: string) => {
+    openDialog({
+      title: 'Informações do cliente',
+      type: 'drawer',
+      content: <CustomerInfoDrawer id={rowId} />,
+    });
+  };
+
+  const onCreateSale = (data: CustomerRow) => {
+    openDialog({
+      title: 'Adicionar uma nova venda',
+      type: 'drawer',
+      content: <SaleFormDrawer defaultCustomer={data} />,
+    });
+  };
+
+  const onDelete = (rowId: string, rowName: string) => {
+    openDialog({
+      title: 'Confirmar ação',
+      type: 'modal',
+      content: <CustomerDeleteModal customers={[{ id: rowId, name: rowName }]} />,
+    });
+  };
 
   const openCustomerForm = () => {
     openDialog({
       title: 'Adicionar um novo cliente',
       type: 'modal',
-      content: <CustomerFormModal creationQueryType="list" onCreate={() => resetFilter()} />,
+      content: <CustomerFormModal creationQueryType="list" onCreate={() => filter.resetFilter()} />,
     });
-  };
-
-  const selectedRowsId = Object.keys(selectedRows);
-
-  const clearSelectedRows = () => {
-    setSelectedRows({});
   };
 
   const onDeleteSelectedRows = () => {
@@ -76,21 +109,13 @@ export function CustomersPage() {
     });
   };
 
-  const handleSearch = () => {
-    if (appliedFilter.filters.length) {
-      applyFilter({ filters: [], logical: 'AND' });
-
-      toast('Os filtros aplicados foram removidos', { position: 'top-right' });
-    }
-  };
-
   return (
     <DashboardLayout title="Clientes">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome ou telefone..." onSearch={handleSearch} />
+          <SearchBar placeholder="Buscar por nome ou telefone..." onSearch={filter.resetFilter} />
 
-          <Filter {...filter} fields={CUSTOMERS_FILTER_FIELDS} onApplyFilter={clearSelectedRows} />
+          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -103,7 +128,15 @@ export function CustomersPage() {
         </PageActions.Section>
       </PageActions>
 
-      <CustomersTable filter={appliedFilter} selectedRows={selectedRows} onSelectionChange={setSelectedRows} />
+      <CustomersTable
+        filter={filter.appliedFilter}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        onEdit={onEdit}
+        onViewInfo={onViewInfo}
+        onCreateSale={onCreateSale}
+        onDelete={onDelete}
+      />
     </DashboardLayout>
   );
 }

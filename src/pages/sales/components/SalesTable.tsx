@@ -5,48 +5,26 @@ import { TableBody } from '../../../components/Table/TableBody';
 import { TableFooter } from '../../../components/Table/TableFooter';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { TableRowsSkeleton } from '../../../components/TableRowsSkeleton';
-import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { useFetchTableSales } from '../../../hooks/useSales';
 import { useTableHelper } from '../../../hooks/useTableHelper';
-import { CustomerRow } from '../../../types/customer';
-import { CustomerInfoDrawer } from '../../customers/components/CustomerInfoDrawer';
-import { SaleDeleteModal } from './SaleDeleteModal';
-import { SaleInfoDrawer } from './SaleInfoDrawer';
 import { getSalesColumns } from './SalesColumns';
 
-interface Props {
+type RowActions = Parameters<typeof getSalesColumns>[0];
+
+interface Props extends RowActions {
   filter: FilterForm;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
 }
 
-export function SalesTable({ filter, selectedRows, onSelectionChange }: Props) {
-  const { openDialog } = useDialog();
-
-  const onViewInfo = (rowId: string) => {
-    openDialog({
-      title: 'Informações da venda',
-      type: 'drawer',
-      content: <SaleInfoDrawer id={rowId} />,
-    });
-  };
-
-  const onDelete = (rowId: string) => {
-    openDialog({
-      title: 'Confirmar ação',
-      type: 'modal',
-      content: <SaleDeleteModal ids={[rowId]} />,
-    });
-  };
-
-  const onViewCustomerInfo = (customerId: CustomerRow['id']) => {
-    openDialog({
-      title: 'Informações do cliente',
-      type: 'drawer',
-      content: <CustomerInfoDrawer id={customerId} />,
-    });
-  };
-
+export function SalesTable({
+  filter,
+  selectedRows,
+  onSelectionChange,
+  onViewInfo,
+  onViewCustomerInfo,
+  onDelete,
+}: Props) {
   const { data, isFetching, isError, refetch } = useFetchTableSales(filter);
   const columns = useMemo(() => getSalesColumns({ onViewInfo, onDelete, onViewCustomerInfo }), []);
 

@@ -1,6 +1,4 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
 import { Button } from '../../components/Button';
 import { DashboardLayout } from '../../components/DashboardLayout';
 import { Filter } from '../../components/Filter/Filter';
@@ -9,12 +7,16 @@ import { SearchBar } from '../../components/SearchBar';
 import { useDialog } from '../../contexts/dialog/dialog-context';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useRowSelection } from '../../hooks/useRowSelection';
+import { CustomerRow } from '../../types/customer';
 import { FilterFieldProps } from '../../types/filters';
+import { CustomerInfoDrawer } from '../customers/components/CustomerInfoDrawer';
 import { SaleDeleteModal } from './components/SaleDeleteModal';
 import { SaleFormDrawer } from './components/SaleForm/SaleForm';
+import { SaleInfoDrawer } from './components/SaleInfoDrawer';
 import { SalesTable } from './components/SalesTable';
 
-const SALES_FILTER_DEFINITIONS: FilterFieldProps[] = [
+const filterFields: FilterFieldProps[] = [
   {
     key: 'customerName',
     label: 'Nome do cliente',
@@ -54,25 +56,41 @@ const SALES_FILTER_DEFINITIONS: FilterFieldProps[] = [
 export function SalesPage() {
   usePageTitle('Vendas');
 
-  const [selectedRows, setSelectedRows] = useState({});
-
+  const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
   const filter = useFilter();
-  const { resetFilter, appliedFilter, applyFilter } = filter;
 
   const openSaleForm = () => {
     openDialog({
       title: 'Adicionar uma nova venda',
       type: 'drawer',
-      content: <SaleFormDrawer onCreate={resetFilter} />,
+      content: <SaleFormDrawer onCreate={filter.resetFilter} />,
     });
   };
 
-  const selectedRowsId = Object.keys(selectedRows);
+  const onViewInfo = (rowId: string) => {
+    openDialog({
+      title: 'Informações da venda',
+      type: 'drawer',
+      content: <SaleInfoDrawer id={rowId} />,
+    });
+  };
 
-  const clearSelectedRows = () => {
-    setSelectedRows({});
+  const onViewCustomerInfo = (customerId: CustomerRow['id']) => {
+    openDialog({
+      title: 'Informações do cliente',
+      type: 'drawer',
+      content: <CustomerInfoDrawer id={customerId} />,
+    });
+  };
+
+  const onDelete = (rowId: string) => {
+    openDialog({
+      title: 'Confirmar ação',
+      type: 'modal',
+      content: <SaleDeleteModal ids={[rowId]} />,
+    });
   };
 
   const onDeleteSelectedRows = () => {
@@ -83,21 +101,13 @@ export function SalesPage() {
     });
   };
 
-  const handleSearch = () => {
-    if (appliedFilter.filters.length) {
-      applyFilter({ filters: [], logical: 'AND' });
-
-      toast('Os filtros aplicados foram removidos', { position: 'top-right' });
-    }
-  };
-
   return (
     <DashboardLayout title="Vendas">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome ou telefone do cliente..." onSearch={handleSearch} />
+          <SearchBar placeholder="Buscar por nome ou telefone do cliente..." onSearch={filter.resetFilter} />
 
-          <Filter {...filter} fields={SALES_FILTER_DEFINITIONS} onApplyFilter={clearSelectedRows} />
+          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -110,7 +120,14 @@ export function SalesPage() {
         </PageActions.Section>
       </PageActions>
 
-      <SalesTable filter={appliedFilter} selectedRows={selectedRows} onSelectionChange={setSelectedRows} />
+      <SalesTable
+        filter={filter.appliedFilter}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        onViewInfo={onViewInfo}
+        onViewCustomerInfo={onViewCustomerInfo}
+        onDelete={onDelete}
+      />
     </DashboardLayout>
   );
 }

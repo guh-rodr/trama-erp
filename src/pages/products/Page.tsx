@@ -1,6 +1,5 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import { useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 import { Button } from '../../components/Button';
 import { DashboardLayout } from '../../components/DashboardLayout';
 import { Filter } from '../../components/Filter/Filter';
@@ -10,6 +9,8 @@ import { useDialog } from '../../contexts/dialog/dialog-context';
 import { useCategoriesAutocomplete } from '../../hooks/useCategories';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useRowSelection } from '../../hooks/useRowSelection';
+import { CategoryItem } from '../../types/category';
 import { FilterFieldProps } from '../../types/filters';
 import { ProductDeleteModal } from './components/ProductDeleteModal';
 import { ProductFormDrawer } from './components/ProductFormDrawer';
@@ -20,7 +21,7 @@ export function ProductsPage() {
 
   const { data: categories } = useCategoriesAutocomplete({ fetchOnMount: true, canFetchModels: false });
 
-  const PRODUCTS_FILTER_FIELDS: FilterFieldProps[] = useMemo(
+  const filterFields: FilterFieldProps[] = useMemo(
     () => [
       {
         key: 'name',
@@ -42,12 +43,10 @@ export function ProductsPage() {
     [categories],
   );
 
-  const [selectedRows, setSelectedRows] = useState({});
-
+  const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
   const filter = useFilter();
-  const { appliedFilter, applyFilter } = filter;
 
   const openProductForm = () => {
     openDialog({
@@ -55,12 +54,6 @@ export function ProductsPage() {
       type: 'drawer',
       content: <ProductFormDrawer />,
     });
-  };
-
-  const selectedRowsId = Object.keys(selectedRows);
-
-  const clearSelectedRows = () => {
-    setSelectedRows({});
   };
 
   const onDeleteSelectedRows = () => {
@@ -71,21 +64,29 @@ export function ProductsPage() {
     });
   };
 
-  const handleSearch = () => {
-    if (appliedFilter.filters.length) {
-      applyFilter({ filters: [], logical: 'AND' });
+  const onEdit = (rowId: string, category: Pick<CategoryItem, 'id' | 'name'>) => {
+    openDialog({
+      title: 'Editar informações do produto',
+      type: 'drawer',
+      content: <ProductFormDrawer defaultProductId={rowId} defaultCategory={category} />,
+    });
+  };
 
-      toast('Os filtros aplicados foram removidos', { position: 'top-right' });
-    }
+  const onDelete = (rowId: string) => {
+    openDialog({
+      title: 'Confirmação',
+      type: 'modal',
+      content: <ProductDeleteModal ids={[rowId]} />,
+    });
   };
 
   return (
     <DashboardLayout title="Produtos">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome" onSearch={handleSearch} />
+          <SearchBar placeholder="Buscar por nome" onSearch={filter.resetFilter} />
 
-          <Filter {...filter} fields={PRODUCTS_FILTER_FIELDS} onApplyFilter={clearSelectedRows} />
+          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -98,7 +99,13 @@ export function ProductsPage() {
         </PageActions.Section>
       </PageActions>
 
-      <ProductsTable filter={appliedFilter} selectedRows={selectedRows} onSelectionChange={setSelectedRows} />
+      <ProductsTable
+        filter={filter.appliedFilter}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </DashboardLayout>
   );
 }
