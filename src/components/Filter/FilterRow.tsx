@@ -1,19 +1,18 @@
 import { ArrowsClockwiseIcon, TrashIcon } from '@phosphor-icons/react';
-import { Control, Controller, useWatch } from 'react-hook-form';
-import { FilterFieldProps, FilterLogicalOp } from '../../types/filters';
+import { Dispatch } from 'react';
+import { FilterFieldProps, FilterItem, FilterLogicalOp } from '../../types/filters';
 import { FILTER_CONDITIONS } from '../../utils/filterConditions';
 import { Autocomplete } from '../Autocomplete/Autocomplete';
-import { FilterForm } from './Filter';
+import { FilterAction } from './Filter';
 import { FilterFieldValue } from './FilterFieldValue';
 
 interface Props {
-  control: Control<FilterForm>;
   index: number;
+  filter: FilterItem;
   fields: FilterFieldProps[];
   currentLogical: FilterLogicalOp;
-  handleToggleLogical: () => void;
-  clearFieldConditions: (field: string) => void;
-  remove: (index: number) => void;
+  value: FilterItem['value'];
+  dispatch: Dispatch<FilterAction>;
 }
 
 const logicalOperatorsMap: Record<FilterLogicalOp, string> = {
@@ -21,31 +20,39 @@ const logicalOperatorsMap: Record<FilterLogicalOp, string> = {
   OR: 'ou',
 };
 
-export function FilterRow({
-  control,
-  index,
-  fields,
-  currentLogical,
-  clearFieldConditions,
-  handleToggleLogical,
-  remove,
-}: Props) {
-  const [fieldKey, fieldOp] = useWatch({
-    control,
-    name: [`filters.${index}.field`, `filters.${index}.operator`],
-  });
-
+export function FilterRow({ index, filter, fields, currentLogical, value, dispatch }: Props) {
   const fieldsOptions = fields.map((f) => ({ label: f.label, value: f.key }));
 
-  const currentField = fields.find((f) => f.key === fieldKey);
+  const field = fields.find((f) => f.key === filter.field)!;
 
-  const conditions = currentField?.type ? FILTER_CONDITIONS[currentField.type] : [];
+  const conditions = field?.type ? FILTER_CONDITIONS[field.type] : [];
+  const currentCondition = conditions.find((c) => c.key === filter.operator);
+
   const conditionsOptions = conditions.map((c) => ({
     label: c.label,
     value: c.key,
   }));
 
-  const currentCondition = conditions.find((c) => c.key === fieldOp);
+  const handleChangeField = (field: string) => {
+    dispatch({ type: 'update', index, payload: { field, operator: '', value: '' } });
+  };
+
+  const handleChangeOp = (operator: string) => {
+    dispatch({ type: 'update', index, payload: { ...filter, operator } });
+  };
+
+  const handleChangeValue = (value: string) => {
+    dispatch({ type: 'update', index, payload: { ...filter, value } });
+  };
+
+  const handleToggleLogical = () => {
+    const newLogical = currentLogical === 'AND' ? 'OR' : 'AND';
+    dispatch({ type: 'update_logical', logical: newLogical });
+  };
+
+  const handleRemoveRow = () => {
+    dispatch({ type: 'remove', index });
+  };
 
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -65,49 +72,33 @@ export function FilterRow({
       </span>
 
       <div className="flex items-center gap-2">
-        <Controller
-          control={control}
-          name={`filters.${index}.field`}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <Autocomplete
-              readOnly
-              value={field.value}
-              onChangeOption={(value) => {
-                field.onChange(value);
-                clearFieldConditions(value);
-              }}
-              className="h-8 min-w-40"
-              placeholder="Campo"
-              options={fieldsOptions}
-            />
-          )}
+        <Autocomplete
+          readOnly
+          value={filter.field}
+          onChangeOption={handleChangeField}
+          className="h-8 min-w-40"
+          placeholder="Campo"
+          options={fieldsOptions}
         />
 
-        <Controller
-          control={control}
-          name={`filters.${index}.operator`}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <Autocomplete
-              readOnly
-              value={field.value}
-              onChangeOption={field.onChange}
-              className="h-8 min-w-40"
-              placeholder="Condição"
-              options={conditionsOptions}
-            />
-          )}
+        <Autocomplete
+          key={filter.field}
+          readOnly
+          value={filter.operator}
+          onChangeOption={handleChangeOp}
+          className="h-8 min-w-40"
+          placeholder="Condição"
+          options={conditionsOptions}
         />
 
-        {currentField && currentCondition?.hasValue && (
-          <FilterFieldValue control={control} field={currentField} name={`filters.${index}.value`} />
+        {field && currentCondition?.hasValue && (
+          <FilterFieldValue field={field} value={value as string} handleChangeValue={handleChangeValue} />
         )}
       </div>
 
       <button
         type="button"
-        onClick={() => remove(index)}
+        onClick={handleRemoveRow}
         className="text-red-400 rounded-md hover:bg-red-100/40 p-2 transition-colors mr-0 ml-auto"
       >
         <TrashIcon size={16} weight="bold" />

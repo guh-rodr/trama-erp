@@ -8,3 +8,18 @@ export interface FilterFieldProps {
   type: 'text' | 'enum' | 'number' | 'date' | 'currency';
   options?: Option[];
 }
+
+export interface FilterItem {
+  field: string;
+  operator: string;
+  value?: string | number;
+}
+
+export interface FilterForm {
+  logical: FilterLogicalOp;
+  filters: FilterItem[];
+}
+
+export interface FilterHandle {
+  reset: () => void;
+}
