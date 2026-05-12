@@ -1,8 +1,8 @@
 import { RowSelectionState } from '@tanstack/react-table';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { DataTable } from '../../../components/DataTable';
-import { FilterForm } from '../../../components/Filter/Filter';
 import { useFetchTableProducts } from '../../../hooks/useProducts';
+import { FilterForm } from '../../../types/filters';
 import { getProductsColumns } from './ProductsColumns';
 
 type RowActions = Parameters<typeof getProductsColumns>[0];

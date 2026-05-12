@@ -9,7 +9,7 @@ import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
 import { CustomerRow } from '../../types/customer';
-import { FilterFieldProps } from '../../types/filters';
+import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { CustomerInfoDrawer } from '../customers/components/CustomerInfoDrawer';
 import { SaleDeleteModal } from './components/SaleDeleteModal';
 import { SaleFormDrawer } from './components/SaleForm/SaleForm';
@@ -59,13 +59,18 @@ export function SalesPage() {
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const filter = useFilter();
+  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+
+  const handleApplyFilter = (filter: FilterForm) => {
+    applyFilter(filter);
+    clearSelectedRows();
+  };
 
   const openSaleForm = () => {
     openDialog({
       title: 'Adicionar uma nova venda',
       type: 'drawer',
-      content: <SaleFormDrawer onCreate={filter.resetFilter} />,
+      content: <SaleFormDrawer onCreate={resetFilter} />,
     });
   };
 
@@ -105,9 +110,9 @@ export function SalesPage() {
     <DashboardLayout title="Vendas">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome ou telefone do cliente..." onSearch={filter.resetFilter} />
+          <SearchBar placeholder="Buscar por nome ou telefone do cliente..." onSearch={resetFilter} />
 
-          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
+          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -121,7 +126,7 @@ export function SalesPage() {
       </PageActions>
 
       <SalesTable
-        filter={filter.appliedFilter}
+        filter={appliedFilter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onViewInfo={onViewInfo}

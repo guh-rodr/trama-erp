@@ -10,7 +10,7 @@ import { convertToDecimal } from '../../functions/currency';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
-import { FilterFieldProps } from '../../types/filters';
+import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { TransactionRow } from '../../types/transaction';
 import { TRANSACTION_CATEGORIES } from '../../utils/transactionCategories';
 import { SaleInfoDrawer } from '../sales/components/SaleInfoDrawer';
@@ -62,13 +62,18 @@ export function CashflowPage() {
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const filter = useFilter();
+  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+
+  const handleApplyFilter = (filter: FilterForm) => {
+    applyFilter(filter);
+    clearSelectedRows();
+  };
 
   const openTransactionForm = () => {
     openDialog({
       title: 'Adicionar nova transação',
       type: 'modal',
-      content: <TransactionForm onCreate={filter.resetFilter} />,
+      content: <TransactionForm onCreate={resetFilter} />,
     });
   };
 
@@ -114,9 +119,9 @@ export function CashflowPage() {
     <DashboardLayout title="Fluxo de Caixa">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por descrição..." onSearch={filter.resetFilter} />
+          <SearchBar placeholder="Buscar por descrição..." onSearch={resetFilter} />
 
-          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
+          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -130,7 +135,7 @@ export function CashflowPage() {
       </PageActions>
 
       <CashflowTable
-        filter={filter.appliedFilter}
+        filter={appliedFilter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onEdit={onEdit}

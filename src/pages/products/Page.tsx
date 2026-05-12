@@ -11,7 +11,7 @@ import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
 import { CategoryItem } from '../../types/category';
-import { FilterFieldProps } from '../../types/filters';
+import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { ProductDeleteModal } from './components/ProductDeleteModal';
 import { ProductFormDrawer } from './components/ProductFormDrawer';
 import { ProductsTable } from './components/ProductsTable';
@@ -20,33 +20,25 @@ export function ProductsPage() {
   usePageTitle('Produtos');
 
   const { data: categories } = useCategoriesAutocomplete({ fetchOnMount: true, canFetchModels: false });
+  const options = useMemo(() => categories?.map(({ id, name }) => ({ label: name, value: id })) ?? [], [categories]);
 
-  const filterFields: FilterFieldProps[] = useMemo(
-    () => [
-      {
-        key: 'name',
-        label: 'Nome',
-        type: 'text',
-      },
-      {
-        key: 'categoryId',
-        label: 'Categoria',
-        type: 'enum',
-        options: categories?.map(({ id, name }) => ({ label: name, value: id })) ?? [],
-      },
-      {
-        key: 'quantity',
-        label: 'Estoque total',
-        type: 'number',
-      },
-    ],
-    [categories],
-  );
+  const filterFields: FilterFieldProps[] = useMemo(() => {
+    return [
+      { key: 'name', label: 'Nome', type: 'text' },
+      { key: 'categoryId', label: 'Categoria', type: 'enum', options },
+      { key: 'quantity', label: 'Estoque total', type: 'number' },
+    ];
+  }, [options]);
 
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const filter = useFilter();
+  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+
+  const handleApplyFilter = (filter: FilterForm) => {
+    applyFilter(filter);
+    clearSelectedRows();
+  };
 
   const openProductForm = () => {
     openDialog({
@@ -84,9 +76,9 @@ export function ProductsPage() {
     <DashboardLayout title="Produtos">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome" onSearch={filter.resetFilter} />
+          <SearchBar placeholder="Buscar por nome" onSearch={resetFilter} />
 
-          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
+          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -100,7 +92,7 @@ export function ProductsPage() {
       </PageActions>
 
       <ProductsTable
-        filter={filter.appliedFilter}
+        filter={appliedFilter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onEdit={onEdit}

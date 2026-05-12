@@ -1,12 +1,12 @@
 import { RowSelectionState } from '@tanstack/react-table';
 import { Dispatch, SetStateAction, useMemo } from 'react';
-import { FilterForm } from '../../../components/Filter/Filter';
 import { TableBody } from '../../../components/Table/TableBody';
 import { TableFooter } from '../../../components/Table/TableFooter';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { TableRowsSkeleton } from '../../../components/TableRowsSkeleton';
 import { useTableHelper } from '../../../hooks/useTableHelper';
 import { useFetchTableTransactions } from '../../../hooks/useTransactions';
+import { FilterForm } from '../../../types/filters';
 import { getCashflowColumns } from './CashflowColumns';
 
 type RowActions = Parameters<typeof getCashflowColumns>[0];

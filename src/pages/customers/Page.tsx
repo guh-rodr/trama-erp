@@ -9,7 +9,7 @@ import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
 import { CustomerForm, CustomerRow } from '../../types/customer';
-import { FilterFieldProps } from '../../types/filters';
+import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { SaleFormDrawer } from '../sales/components/SaleForm/SaleForm';
 import { CustomerDeleteModal } from './components/CustomerDeleteModal';
 import { CustomerFormModal } from './components/CustomerFormModal';
@@ -50,7 +50,12 @@ export function CustomersPage() {
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const filter = useFilter();
+  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+
+  const handleApplyFilter = (filter: FilterForm) => {
+    applyFilter(filter);
+    clearSelectedRows();
+  };
 
   const onEdit = (data: CustomerRow) => {
     const defaultValues: CustomerForm = {
@@ -95,7 +100,7 @@ export function CustomersPage() {
     openDialog({
       title: 'Adicionar um novo cliente',
       type: 'modal',
-      content: <CustomerFormModal creationQueryType="list" onCreate={() => filter.resetFilter()} />,
+      content: <CustomerFormModal creationQueryType="list" onCreate={resetFilter} />,
     });
   };
 
@@ -113,9 +118,9 @@ export function CustomersPage() {
     <DashboardLayout title="Clientes">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome ou telefone..." onSearch={filter.resetFilter} />
+          <SearchBar placeholder="Buscar por nome ou telefone..." onSearch={resetFilter} />
 
-          <Filter {...filter} fields={filterFields} onApplyFilter={clearSelectedRows} />
+          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -129,7 +134,7 @@ export function CustomersPage() {
       </PageActions>
 
       <CustomersTable
-        filter={filter.appliedFilter}
+        filter={appliedFilter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onEdit={onEdit}
