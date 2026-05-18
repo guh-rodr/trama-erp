@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
-import { FilterForm } from '../components/Filter/Filter';
 import {
   bulkDeleteProducts,
   createProduct,
@@ -11,6 +10,7 @@ import {
   fetchTableProducts,
   updateProduct,
 } from '../services/product';
+import { FilterForm } from '../types/filters';
 import { ProductItem, ProductResponse, ProductVariant } from '../types/product';
 import { useTableParams } from './useTableParams';
 
