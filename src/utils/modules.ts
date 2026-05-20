@@ -1,4 +1,11 @@
-import { ArrowsClockwiseIcon, ChartLineUpIcon, ShoppingBagIcon, StackIcon, UsersIcon } from '@phosphor-icons/react';
+import {
+  ArrowsClockwiseIcon,
+  ChartLineUpIcon,
+  PackageIcon,
+  ShoppingBagIcon,
+  StackIcon,
+  UsersIcon,
+} from '@phosphor-icons/react';
 
 export const MODULES = [
   {
@@ -14,6 +21,13 @@ export const MODULES = [
     description: 'Definição de grupos e controle de produtos',
     icon: StackIcon,
     href: '/dashboard/products',
+  },
+  {
+    key: 'stock-movements',
+    name: 'Movimentações de Estoque',
+    description: 'Visualização de entradas e saídas de estoque',
+    icon: PackageIcon,
+    href: '/dashboard/stock-movements',
   },
   {
     key: 'sales',

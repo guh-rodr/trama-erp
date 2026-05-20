@@ -14,7 +14,9 @@ import { CategoryItem } from '../../types/category';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { ProductDeleteModal } from './components/ProductDeleteModal';
 import { ProductFormDrawer } from './components/ProductFormDrawer';
+import { ProductInfoDrawer } from './components/ProductInfoDrawer';
 import { ProductsTable } from './components/ProductsTable';
+import { StockMovementFormDrawer } from './components/StockMovementDrawer';
 
 export function ProductsPage() {
   usePageTitle('Produtos');
@@ -53,6 +55,22 @@ export function ProductsPage() {
       title: 'Confirmar ação',
       type: 'modal',
       content: <ProductDeleteModal onDelete={clearSelectedRows} ids={selectedRowsId} />,
+    });
+  };
+
+  const onCreateStockMovement = (rowId: string, rowName: string, currentStock: number) => {
+    openDialog({
+      title: 'Movimentar estoque',
+      type: 'drawer',
+      content: <StockMovementFormDrawer productId={rowId} productName={rowName} currentStock={currentStock} />,
+    });
+  };
+
+  const onViewInfo = (rowId: string) => {
+    openDialog({
+      title: 'Informações do produto',
+      type: 'drawer',
+      content: <ProductInfoDrawer id={rowId} />,
     });
   };
 
@@ -95,6 +113,8 @@ export function ProductsPage() {
         filter={appliedFilter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
+        onCreateStockMovement={onCreateStockMovement}
+        onViewInfo={onViewInfo}
         onEdit={onEdit}
         onDelete={onDelete}
       />

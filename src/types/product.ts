@@ -5,6 +5,7 @@ export interface ProductVariant {
   size: string;
   color: string;
   hasSales: boolean;
+  averageCost?: number;
   costPrice: number;
   salePrice: number;
   quantity: number;

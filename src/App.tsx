@@ -13,6 +13,7 @@ import { HomePage } from './pages/home/Page';
 import { ProductsPage } from './pages/products/Page';
 import { SalesPage } from './pages/sales/Page';
 import { StatsPage } from './pages/stats/Page';
+import { StockMovementsPage } from './pages/stock-movements/Page';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +95,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <CashflowPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/stock-movements"
+                element={
+                  <ProtectedRoute>
+                    <StockMovementsPage />
                   </ProtectedRoute>
                 }
               />

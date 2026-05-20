@@ -1,4 +1,4 @@
-import { PencilIcon, TrashSimpleIcon } from '@phosphor-icons/react';
+import { InfoIcon, PackageIcon, PencilIcon, TrashSimpleIcon } from '@phosphor-icons/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '../../../components/Checkbox';
 import { formatToReal } from '../../../functions/currency';
@@ -6,6 +6,8 @@ import { CategoryItem } from '../../../types/category';
 import { ProductRow } from '../../../types/product';
 
 export const getProductsColumns = (actions: {
+  onCreateStockMovement: (rowId: string, rowName: string, currentStock: number) => void;
+  onViewInfo: (rowId: string) => void;
   onEdit: (rowId: string, category: Pick<CategoryItem, 'id' | 'name'>) => void;
   onDelete: (rowId: string, rowName: string) => void;
 }): ColumnDef<ProductRow>[] => [
@@ -76,6 +78,22 @@ export const getProductsColumns = (actions: {
     header: '',
     cell: ({ row }) => (
       <div className="flex justify-end space-x-2">
+        <button
+          type="button"
+          onClick={() => actions.onCreateStockMovement(row.original.id, row.original.name, row.original.quantity)}
+          className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-amber-500 hover:text-white transition-colors"
+        >
+          <PackageIcon weight="bold" size={16} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => actions.onViewInfo(row.original.id)}
+          className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-blue-500 hover:text-white transition-colors"
+        >
+          <InfoIcon weight="bold" size={16} />
+        </button>
+
         <button
           type="button"
           onClick={() => actions.onEdit(row.original.id, row.original.category)}
