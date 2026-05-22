@@ -28,7 +28,7 @@ export function StockMovementsPage() {
   const [searchParams] = useSearchParams();
   const productId = searchParams.get('pid');
 
-  const defaultFilters: FilterForm | undefined = useMemo(() => {
+  const defaultFilter: FilterForm | undefined = useMemo(() => {
     if (!productId) return;
 
     return {
@@ -65,7 +65,7 @@ export function StockMovementsPage() {
   }, [options]);
 
   const { selectedRows, clearSelectedRows, setSelectedRows } = useRowSelection();
-  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter(defaultFilter);
 
   const handleApplyFilter = (filter: FilterForm) => {
     applyFilter(filter);
@@ -83,13 +83,7 @@ export function StockMovementsPage() {
         <PageActions.Section>
           <SearchBar placeholder="Buscar por motivo..." onSearch={resetFilter} />
 
-          <Filter
-            ref={filterRef}
-            fields={filterFields}
-            isLoading={isFetchingCategories}
-            defaultApplied={defaultFilters}
-            onApply={handleApplyFilter}
-          />
+          <Filter ref={filterRef} fields={filterFields} isLoading={isFetchingCategories} onApply={handleApplyFilter} />
         </PageActions.Section>
       </PageActions>
 
