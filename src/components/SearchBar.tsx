@@ -1,7 +1,7 @@
 import { CircleNotchIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
-import { useQueryParams } from '../hooks/useQueryParams';
+import { useTableParams } from '../hooks/useTableParams';
 import { Input } from './Input';
 
 interface Props {
@@ -12,19 +12,19 @@ interface Props {
 export function SearchBar({ placeholder, onSearch }: Props) {
   const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { search, setQueryParams } = useQueryParams();
+  const { params, setParams } = useTableParams();
 
   const debouncedOnChange = useDebounce((value: string) => {
     setIsTyping(false);
-    setQueryParams({ search: value });
+    setParams({ search: value });
     onSearch?.(value);
   }, 700);
 
   useEffect(() => {
-    if (!search && inputRef.current) {
+    if (!params.search && inputRef.current) {
       inputRef.current.value = '';
     }
-  }, [search]);
+  }, [params.search]);
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -47,7 +47,7 @@ export function SearchBar({ placeholder, onSearch }: Props) {
       <Input
         ref={inputRef}
         onChange={handleChangeInput}
-        defaultValue={search}
+        defaultValue={params.search}
         className="min-w-sm pl-9 pr-4 placeholder-neutral-400 font-normal"
         placeholder={placeholder}
       />

@@ -1,5 +1,5 @@
 import type { Table } from '@tanstack/react-table';
-import { useQueryParams } from '../../hooks/useQueryParams';
+import { useTableParams } from '../../hooks/useTableParams';
 import { TablePagination } from './TablePagination';
 
 interface Props<TData> {
@@ -7,17 +7,13 @@ interface Props<TData> {
 }
 
 export function TableFooter<TData>({ table }: Props<TData>) {
-  const { queryParams, setQueryParams } = useQueryParams();
-
-  const page = Number(queryParams.get('page') || 1);
+  const { params, setParams } = useTableParams();
 
   const pageCount = table.getPageCount();
   const rowCount = table.getRowCount();
 
   const setPage = (newPage: number) => {
-    setQueryParams({
-      page: newPage,
-    });
+    setParams({ page: newPage });
   };
 
   const selectedRowsCount = Object.keys(table.getState().rowSelection).length;
@@ -54,7 +50,7 @@ export function TableFooter<TData>({ table }: Props<TData>) {
               <div className="float-right">
                 <TablePagination
                   pageCount={pageCount}
-                  pageIndex={page - 1}
+                  pageIndex={params.page - 1}
                   setPage={setPage}
                   canClickPrev={table.getCanPreviousPage()}
                   canClickNext={table.getCanNextPage()}

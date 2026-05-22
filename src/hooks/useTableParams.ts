@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router';
+import { useQueryParams } from './useQueryParams';
 
 export interface TableParams {
   page: number;
@@ -8,33 +8,17 @@ export interface TableParams {
 }
 
 export function useTableParams() {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const page = Number(searchParams.get('page') || 1);
-  const search = searchParams.get('search')?.toLowerCase() || '';
-
-  const sortBy = searchParams.get('sortBy');
-  const sortDir = searchParams.get('sortDir');
-
-  const setParams = (params: Record<string, string | number | null>) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-
-    Object.entries(params).forEach(([key, value]) => {
-      if (value === null) {
-        newSearchParams.delete(key);
-      } else {
-        newSearchParams.set(key, String(value));
-      }
-    });
-
-    setSearchParams(newSearchParams);
-  };
+  const { queryParams, setQueryParams } = useQueryParams();
 
   const params: TableParams = {
-    page,
-    search,
-    sortBy,
-    sortDir,
+    page: Number(queryParams.page || 1),
+    search: queryParams.search || '',
+    sortBy: queryParams.sortBy || null,
+    sortDir: queryParams.sortDir || null,
+  };
+
+  const setParams = (updates: Partial<TableParams>) => {
+    setQueryParams(updates);
   };
 
   return { params, setParams };

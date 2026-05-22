@@ -92,8 +92,8 @@ export function DatePickerRange() {
   const { queryParams, setQueryParams } = useQueryParams();
   const [canShowPicker, setCanShowPicker] = useState(false);
 
-  const startDateStr = queryParams.get('startDate');
-  const endDateStr = queryParams.get('endDate');
+  const startDateStr = queryParams.startDate;
+  const endDateStr = queryParams.endDate;
 
   const defaultStartDate = startDateStr ? parseISO(startDateStr) : toZonedTime(new Date(), 'America/Sao_Paulo');
   const defaultEndDate = endDateStr ? parseISO(endDateStr) : toZonedTime(new Date(), 'America/Sao_Paulo');

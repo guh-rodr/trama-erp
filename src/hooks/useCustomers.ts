@@ -21,7 +21,6 @@ import {
   CustomerSaleItem,
   CustomerStatsResponse,
 } from '../types/customer';
-import { useQueryParams } from './useQueryParams';
 import { useTableParams } from './useTableParams';
 
 export function useFetchTableCustomers(filter: FilterForm) {
@@ -162,11 +161,11 @@ export function useDeleteCustomer() {
 }
 
 export function useDeleteManyCustomers() {
-  const { queryParams } = useQueryParams();
+  const {
+    params: { page },
+  } = useTableParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
-  const page = Number(queryParams.get('page') || 1);
 
   return useMutation({
     mutationFn: deleteManyCustomers,

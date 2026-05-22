@@ -14,7 +14,7 @@ interface Props {
 export function QueryTabs({ prop, defaultValue, tabs }: Props) {
   const { queryParams, setQueryParams } = useQueryParams();
 
-  const current = queryParams.get(prop) || defaultValue;
+  const current = queryParams[prop] || defaultValue;
 
   const handleClick = (value: TabProps['value']) => {
     setQueryParams({ [prop]: value });
