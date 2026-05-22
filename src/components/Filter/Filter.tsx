@@ -1,5 +1,5 @@
 import { CircleNotchIcon, FunnelSimpleIcon, FunnelSimpleXIcon, PlusIcon } from '@phosphor-icons/react';
-import { forwardRef, useEffect, useImperativeHandle, useReducer, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useQueryParams } from '../../hooks/useQueryParams';
@@ -87,13 +87,9 @@ interface Props {
   fields: FilterFieldProps[];
   onApply: (filter: FilterForm) => void;
   isLoading?: boolean;
-  defaultApplied?: FilterForm;
 }
 
-export const Filter = forwardRef<FilterHandle, Props>(function Filter(
-  { fields, onApply, isLoading, defaultApplied },
-  ref,
-) {
+export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, onApply, isLoading }, ref) {
   const { setQueryParams } = useQueryParams();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -110,23 +106,20 @@ export const Filter = forwardRef<FilterHandle, Props>(function Filter(
     ref,
     () => ({
       reset() {
-        if (appliedCountRef.current === 0) return;
+        if (appliedCountRef.current === 0 || isLoading) return;
 
         toast('Os filtros aplicados foram resetados');
 
         dispatch({ type: 'set_default', filter: { filters: [], logical: 'AND' } });
         onApply?.({ filters: [], logical: 'AND' });
       },
+      update(filter: FilterForm) {
+        dispatch({ type: 'set_default', filter });
+        onApply?.(filter);
+      },
     }),
-    [onApply, appliedCountRef],
+    [onApply, isLoading, appliedCountRef],
   );
-
-  useEffect(() => {
-    if (!defaultApplied || defaultApplied.filters.length === 0) return;
-
-    dispatch({ type: 'set_default', filter: defaultApplied });
-    onApply(defaultApplied);
-  }, [defaultApplied, onApply]);
 
   useClickOutside(containerRef, () => {
     if (isOpen) {

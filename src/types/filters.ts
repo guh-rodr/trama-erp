@@ -22,4 +22,5 @@ export interface FilterForm {
 
 export interface FilterHandle {
   reset: () => void;
+  update: (filter: FilterForm) => void;
 }
