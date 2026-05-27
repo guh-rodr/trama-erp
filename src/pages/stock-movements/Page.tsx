@@ -4,7 +4,7 @@ import { DashboardLayout } from '../../components/DashboardLayout';
 import { Filter } from '../../components/Filter/Filter';
 import { PageActions } from '../../components/PageActions/PageActions';
 import { SearchBar } from '../../components/SearchBar';
-import { useFetchCategories } from '../../hooks/useCategories';
+import { useCategoriesAutocomplete } from '../../hooks/useCategories';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
@@ -14,7 +14,7 @@ import { StockMovementsTable } from './components/StockMovementsTable';
 export function StockMovementsPage() {
   usePageTitle('Movimentações de Estoque');
 
-  const { data: categories, isFetching: isFetchingCategories } = useFetchCategories({
+  const { data: categories, isFetching: isFetchingCategories } = useCategoriesAutocomplete({
     fetchOnMount: true,
     canFetchModels: true,
   });
@@ -65,30 +65,30 @@ export function StockMovementsPage() {
   }, [options]);
 
   const { selectedRows, clearSelectedRows, setSelectedRows } = useRowSelection();
-  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter(defaultFilter);
+  const { filter, setFilter } = useFilter(defaultFilter);
 
   const handleApplyFilter = (filter: FilterForm) => {
-    applyFilter(filter);
+    setFilter(filter);
     clearSelectedRows();
   };
 
   const canShowBalanceCol = useMemo(
-    () => appliedFilter.filters.some((f) => f.field === 'productId' && f.operator === 'equals'),
-    [appliedFilter],
+    () => filter.filters.some((f) => f.field === 'productId' && f.operator === 'equals'),
+    [filter],
   );
 
   return (
     <DashboardLayout title="Movimentações de Estoque">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por motivo..." onSearch={resetFilter} />
+          <SearchBar placeholder="Buscar por motivo..." />
 
-          <Filter ref={filterRef} fields={filterFields} isLoading={isFetchingCategories} onApply={handleApplyFilter} />
+          <Filter filter={filter} fields={filterFields} isLoading={isFetchingCategories} onApply={handleApplyFilter} />
         </PageActions.Section>
       </PageActions>
 
       <StockMovementsTable
-        filter={appliedFilter}
+        filter={filter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         canShowBalanceCol={canShowBalanceCol}

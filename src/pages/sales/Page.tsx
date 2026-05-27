@@ -59,10 +59,10 @@ export function SalesPage() {
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+  const { filter, setFilter, resetFilter } = useFilter();
 
   const handleApplyFilter = (filter: FilterForm) => {
-    applyFilter(filter);
+    setFilter(filter);
     clearSelectedRows();
   };
 
@@ -112,7 +112,7 @@ export function SalesPage() {
         <PageActions.Section>
           <SearchBar placeholder="Buscar por nome ou telefone do cliente..." onSearch={resetFilter} />
 
-          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
+          <Filter filter={filter} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -126,7 +126,7 @@ export function SalesPage() {
       </PageActions>
 
       <SalesTable
-        filter={appliedFilter}
+        filter={filter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onViewInfo={onViewInfo}

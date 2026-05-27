@@ -1,14 +1,12 @@
 import { CircleNotchIcon, FunnelSimpleIcon, FunnelSimpleXIcon, PlusIcon } from '@phosphor-icons/react';
-import { forwardRef, useImperativeHandle, useReducer, useRef, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useClickOutside } from '../../hooks/useClickOutside';
-import { useQueryParams } from '../../hooks/useQueryParams';
-import { FilterFieldProps, FilterForm, FilterHandle, FilterItem, FilterLogicalOp } from '../../types/filters';
+import { FilterFieldProps, FilterForm, FilterItem, FilterLogicalOp } from '../../types/filters';
 import { FilterRow } from './FilterRow';
 
 interface FilterState {
   draft: FilterForm;
-  applied: FilterForm;
 }
 
 export type FilterAction =
@@ -16,16 +14,13 @@ export type FilterAction =
   | { type: 'remove'; index: number }
   | { type: 'update'; index: number; payload: Partial<FilterItem> }
   | { type: 'update_logical'; logical: FilterLogicalOp }
-  | { type: 'apply' }
-  | { type: 'open' }
   | { type: 'clear' }
-  | { type: 'set_default'; filter: FilterForm };
+  | { type: 'set'; filter: FilterForm };
 
 function reducer(state: FilterState, action: FilterAction): FilterState {
   switch (action.type) {
     case 'add':
       return {
-        ...state,
         draft: {
           ...state.draft,
           filters: [...state.draft.filters, { field: '', operator: '' }],
@@ -33,7 +28,6 @@ function reducer(state: FilterState, action: FilterAction): FilterState {
       };
     case 'remove':
       return {
-        ...state,
         draft: {
           ...state.draft,
           filters: state.draft.filters.filter((_, i) => i !== action.index),
@@ -41,7 +35,6 @@ function reducer(state: FilterState, action: FilterAction): FilterState {
       };
     case 'update':
       return {
-        ...state,
         draft: {
           ...state.draft,
           filters: state.draft.filters.map((f, i) => (i === action.index ? { ...f, ...action.payload } : f)),
@@ -49,34 +42,21 @@ function reducer(state: FilterState, action: FilterAction): FilterState {
       };
     case 'update_logical':
       return {
-        ...state,
         draft: {
           ...state.draft,
           logical: action.logical,
         },
       };
-    case 'apply':
-      return {
-        ...state,
-        applied: state.draft,
-      };
-    case 'open':
-      return {
-        ...state,
-        draft: state.applied.filters.length > 0 ? state.applied : state.draft,
-      };
     case 'clear':
       return {
-        ...state,
         draft: {
           ...state.draft,
           filters: [],
         },
       };
-    case 'set_default':
+    case 'set':
       return {
-        draft: state.draft,
-        applied: action.filter,
+        draft: action.filter,
       };
     default:
       return state;
@@ -84,42 +64,19 @@ function reducer(state: FilterState, action: FilterAction): FilterState {
 }
 
 interface Props {
+  filter: FilterForm;
   fields: FilterFieldProps[];
   onApply: (filter: FilterForm) => void;
   isLoading?: boolean;
 }
 
-export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, onApply, isLoading }, ref) {
-  const { setQueryParams } = useQueryParams();
+export function Filter({ filter, fields, onApply, isLoading }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [state, dispatch] = useReducer(reducer, {
-    draft: { filters: [], logical: 'AND' },
-    applied: { filters: [], logical: 'AND' },
-  });
+  const [state, dispatch] = useReducer(reducer, { draft: filter });
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const appliedCountRef = useRef(state.applied.filters.length);
-  appliedCountRef.current = state.applied.filters.length;
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      reset() {
-        if (appliedCountRef.current === 0 || isLoading) return;
-
-        toast('Os filtros aplicados foram resetados');
-
-        dispatch({ type: 'set_default', filter: { filters: [], logical: 'AND' } });
-        onApply?.({ filters: [], logical: 'AND' });
-      },
-      update(filter: FilterForm) {
-        dispatch({ type: 'set_default', filter });
-        onApply?.(filter);
-      },
-    }),
-    [onApply, isLoading, appliedCountRef],
-  );
+  const appliedFiltersCount = filter.filters.length;
 
   useClickOutside(containerRef, () => {
     if (isOpen) {
@@ -132,7 +89,7 @@ export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, 
     setIsOpen(isNowOpen);
 
     if (isNowOpen) {
-      dispatch({ type: 'open' });
+      dispatch({ type: 'set', filter });
     }
   };
 
@@ -142,10 +99,8 @@ export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, 
       return;
     }
 
-    dispatch({ type: 'apply' });
     onApply?.(state.draft);
     setIsOpen(false);
-    setQueryParams({ page: 1, search: null });
   };
 
   const handleClear = () => {
@@ -173,9 +128,9 @@ export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, 
           </span>
         )}
 
-        {!isLoading && appliedCountRef.current > 0 && (
+        {!isLoading && appliedFiltersCount > 0 && (
           <span className="absolute top-0 right-0 bg-indigo-500 text-white rounded-full px-2 text-xs py-0.5 -mt-2 -mr-2">
-            {appliedCountRef.current}
+            {appliedFiltersCount}
           </span>
         )}
       </div>
@@ -233,4 +188,4 @@ export const Filter = forwardRef<FilterHandle, Props>(function Filter({ fields, 
       )}
     </div>
   );
-});
+}

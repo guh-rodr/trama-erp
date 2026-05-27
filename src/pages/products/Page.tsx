@@ -35,10 +35,10 @@ export function ProductsPage() {
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
-  const { appliedFilter, applyFilter, resetFilter, filterRef } = useFilter();
+  const { filter, setFilter } = useFilter();
 
   const handleApplyFilter = (filter: FilterForm) => {
-    applyFilter(filter);
+    setFilter(filter);
     clearSelectedRows();
   };
 
@@ -94,9 +94,9 @@ export function ProductsPage() {
     <DashboardLayout title="Produtos">
       <PageActions>
         <PageActions.Section>
-          <SearchBar placeholder="Buscar por nome" onSearch={resetFilter} />
+          <SearchBar placeholder="Buscar por nome" />
 
-          <Filter ref={filterRef} fields={filterFields} onApply={handleApplyFilter} />
+          <Filter filter={filter} fields={filterFields} onApply={handleApplyFilter} />
 
           <PageActions.DeleteButton canShow={selectedRowsId.length > 0} onClick={onDeleteSelectedRows} />
         </PageActions.Section>
@@ -110,7 +110,7 @@ export function ProductsPage() {
       </PageActions>
 
       <ProductsTable
-        filter={appliedFilter}
+        filter={filter}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onCreateStockMovement={onCreateStockMovement}
