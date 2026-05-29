@@ -1,4 +1,5 @@
 import z from 'zod';
+import { FilterForm, useFilter } from './useFilter';
 import { useQueryParams } from './useQueryParams';
 
 const TableParamsSchema = z.object({
@@ -8,14 +9,19 @@ const TableParamsSchema = z.object({
   sortDir: z.enum(['asc', 'desc']).optional(),
 });
 
-export type TableParams = z.infer<typeof TableParamsSchema>;
+type BaseTableParams = z.infer<typeof TableParamsSchema>;
+export type TableParams = BaseTableParams & { filter: FilterForm };
 
 export function useTableParams() {
+  const { filter } = useFilter();
   const { queryParams, setQueryParams } = useQueryParams();
 
-  const params = TableParamsSchema.safeParse(queryParams).data ?? { page: 1 };
+  const params = {
+    ...(TableParamsSchema.safeParse(queryParams).data ?? { page: 1 }),
+    filter,
+  };
 
-  const setParams = (newParams: Partial<TableParams>) => {
+  const setParams = (newParams: Partial<BaseTableParams>) => {
     setQueryParams(newParams);
   };
 

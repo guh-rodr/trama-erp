@@ -7,7 +7,7 @@ export const initialFilterForm: FilterForm = {
   logical: 'AND',
 };
 
-const FilterSchema = z.object({
+export const FilterSchema = z.object({
   filters: z.array(
     z.object({
       field: z.string(),
