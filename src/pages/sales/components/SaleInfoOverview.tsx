@@ -4,7 +4,7 @@ import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
 import { formatDate } from '../../../functions/formatDate';
-import { useFetchSaleOverview } from '../../../hooks/useSales';
+import { useSaleOverview } from '../../../hooks/useSales';
 import { SaleRow } from '../../../types/sale';
 import { SaleStatusBadge } from './SaleStatusBadge';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function SaleInfoOverview({ id }: Props) {
-  const { data, isLoading, isError, isSuccess } = useFetchSaleOverview(id);
+  const { data, isLoading, isError, isSuccess } = useSaleOverview(id);
 
   return (
     <div className="mt-4 space-y-1">

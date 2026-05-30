@@ -1,16 +1,13 @@
-import { FilterForm } from '../components/Filter/Filter';
 import { TableParams } from '../hooks/useTableParams';
 import { api } from '../lib/api';
 import { SaleForm, SaleInstallment, SaleInstallmentForm } from '../types/sale';
 
 const API_PATH = '/sales';
 
-export async function fetchTableSales(params: TableParams, filter: FilterForm) {
+export async function fetchSales({ filter, ...params }: TableParams) {
   const response = await api.post(`${API_PATH}/list`, filter, { params });
   return response.data;
 }
-
-// --------------
 
 export async function fetchSaleOverview(id: string) {
   const response = await api.get(`${API_PATH}/${id}/overview`);
@@ -26,8 +23,6 @@ export async function fetchSaleInstallments(id: string) {
   const response = await api.get(`${API_PATH}/${id}/installments`);
   return response.data;
 }
-
-// --------------
 
 export async function createSale(data: SaleForm) {
   const response = await api.post(API_PATH, data);
@@ -45,8 +40,6 @@ export async function deleteSales(ids: string[]) {
     return response.data;
   }
 }
-
-// --------------
 
 export async function createSaleInstallment(saleId: string, data: SaleInstallmentForm) {
   const response = await api.post(`${API_PATH}/${saleId}/installments`, data);

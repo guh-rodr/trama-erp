@@ -4,28 +4,32 @@ import { TableBody } from '../../../components/Table/TableBody';
 import { TableFooter } from '../../../components/Table/TableFooter';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { TableRowsSkeleton } from '../../../components/TableRowsSkeleton';
-import { useFetchTableSales } from '../../../hooks/useSales';
 import { useTableHelper } from '../../../hooks/useTableHelper';
-import { FilterForm } from '../../../types/filters';
+import { SaleResponse } from '../../../types/sale';
 import { getSalesColumns } from './SalesColumns';
 
 type RowActions = Parameters<typeof getSalesColumns>[0];
 
 interface Props extends RowActions {
-  filter: FilterForm;
+  data?: SaleResponse;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
 }
 
 export function SalesTable({
-  filter,
+  data,
+  isFetching,
+  isError,
+  refetch,
   selectedRows,
   onSelectionChange,
   onViewInfo,
   onViewCustomerInfo,
   onDelete,
 }: Props) {
-  const { data, isFetching, isError, refetch } = useFetchTableSales(filter);
   const columns = useMemo(() => getSalesColumns({ onViewInfo, onDelete, onViewCustomerInfo }), []);
 
   const table = useTableHelper({

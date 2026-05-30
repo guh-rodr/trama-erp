@@ -8,6 +8,7 @@ import { useDialog } from '../../contexts/dialog/dialog-context';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
+import { useSales } from '../../hooks/useSales';
 import { CustomerRow } from '../../types/customer';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { CustomerInfoDrawer } from '../customers/components/CustomerInfoDrawer';
@@ -55,6 +56,8 @@ const filterFields: FilterFieldProps[] = [
 
 export function SalesPage() {
   usePageTitle('Vendas');
+
+  const { data: sales, isFetching, isError, refetch } = useSales();
 
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
@@ -126,7 +129,10 @@ export function SalesPage() {
       </PageActions>
 
       <SalesTable
-        filter={filter}
+        data={sales}
+        isError={isError}
+        isFetching={isFetching}
+        refetch={refetch}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onViewInfo={onViewInfo}

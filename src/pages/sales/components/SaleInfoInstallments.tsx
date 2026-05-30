@@ -4,7 +4,7 @@ import { LoadingNotification } from '../../../components/LoadingNotification';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { formatToReal } from '../../../functions/currency';
 import { formatDate } from '../../../functions/formatDate';
-import { useFetchSaleInstallments } from '../../../hooks/useSales';
+import { useSaleInstallments } from '../../../hooks/useSales';
 import { SaleRow } from '../../../types/sale';
 import { CreateInstallmentForm } from './CreateInstallmentForm';
 import { InstallmentDeleteModal } from './InstallmentDeleteModal';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function SaleInfoInstallments({ id }: Props) {
-  const { data, isLoading, isError, isSuccess } = useFetchSaleInstallments(id);
+  const { data, isLoading, isError, isSuccess } = useSaleInstallments(id);
 
   const { openDialog } = useDialog();
 

@@ -1,7 +1,7 @@
 import { ChecksIcon, CircleNotchIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useCreateSaleInstallment, useFetchSaleOverview } from '../../../hooks/useSales';
+import { useCreateSaleInstallment, useSaleOverview } from '../../../hooks/useSales';
 import { getTodayDate } from '../../../lib/date';
 import { SaleInstallmentForm, SaleRow } from '../../../types/sale';
 import { InstallmentContainer } from './InstallmentContainer';
@@ -36,7 +36,7 @@ export function CreateInstallmentForm({ saleId }: Props) {
     );
   };
 
-  const { data, isFetching } = useFetchSaleOverview(saleId);
+  const { data, isFetching } = useSaleOverview(saleId);
 
   const installmentValue = watch('value');
 

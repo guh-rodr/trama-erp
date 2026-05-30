@@ -4,7 +4,7 @@ import { Card } from '../../../components/Card';
 import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
-import { useFetchSaleItems } from '../../../hooks/useSales';
+import { useSaleItems } from '../../../hooks/useSales';
 import { SaleRow } from '../../../types/sale';
 import { COLORS } from '../../../utils/colors';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function SaleInfoItems({ id }: Props) {
-  const { data, isLoading, isSuccess, isError } = useFetchSaleItems(id);
+  const { data, isLoading, isSuccess, isError } = useSaleItems(id);
 
   const [expandedItemId, setExpandedItemId] = useState('');
 
