@@ -8,7 +8,7 @@ import { CurrencyInput } from '../../../components/CurrencyInput';
 import { Input } from '../../../components/Input';
 import { Label } from '../../../components/Label';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useCreateTransaction, useEditTransaction } from '../../../hooks/useTransactions';
+import { useCreateTransaction, useUpdateTransaction } from '../../../hooks/useTransactions';
 import { getTodayDate } from '../../../lib/date';
 import { TransactionFormProps, TransactionRow } from '../../../types/transaction';
 import { TRANSACTION_CATEGORIES } from '../../../utils/transactionCategories';
@@ -32,7 +32,7 @@ export function TransactionForm({ defaultValues, onCreate }: Props) {
   const flow = watch('flow');
 
   const { mutate: createMutate, isPending: isPendingCreate } = useCreateTransaction();
-  const { mutate: editMutate, isPending: isPendingEdit } = useEditTransaction();
+  const { mutate: updateMutate, isPending: isPendingEdit } = useUpdateTransaction();
 
   const onError = useCallback(() => {
     toast.error('Existem campos vazios ou inválidos.', { id: 'form-error' });
@@ -47,7 +47,7 @@ export function TransactionForm({ defaultValues, onCreate }: Props) {
         },
       });
     } else {
-      editMutate(
+      updateMutate(
         { ...data, id: defaultValues.id },
         {
           onSuccess: () => {

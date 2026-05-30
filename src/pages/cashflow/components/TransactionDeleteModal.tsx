@@ -1,6 +1,6 @@
 import { Button } from '../../../components/Button';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useDeleteManyTransactions, useDeleteTransaction } from '../../../hooks/useTransactions';
+import { useBulkDeleteTransactions, useDeleteTransaction } from '../../../hooks/useTransactions';
 import { TransactionRow } from '../../../types/transaction';
 
 interface Props {
@@ -13,13 +13,13 @@ export function TransactionDeleteModal({ ids, onDelete, isSale = false }: Props)
   const { closeDialog } = useDialog();
 
   const { mutate: deleteTransactionMutate, isPending: isPendingDelete } = useDeleteTransaction();
-  const { mutate: deleteManyTransactionsMutate, isPending: isPendingDeleteMany } = useDeleteManyTransactions();
+  const { mutate: bulkDeleteTransactionsMutate, isPending: isPendingDeleteMany } = useBulkDeleteTransactions();
 
   const isManyDelete = Array.isArray(ids) && ids.length > 1;
 
   const handleConfirm = () => {
     if (isManyDelete) {
-      deleteManyTransactionsMutate(ids, {
+      bulkDeleteTransactionsMutate(ids, {
         onSuccess: () => {
           onDelete?.();
           closeDialog();

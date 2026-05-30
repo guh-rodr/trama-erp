@@ -1,27 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router';
-import { FilterForm } from '../components/Filter/Filter';
 import {
+  bulkDeleteTransactions,
   createTransaction,
-  deleteManyTransactions,
   deleteTransaction,
-  editTransaction,
-  fetchTableTransaction,
+  fetchTransactions,
+  updateTransaction,
 } from '../services/transaction';
 import { TransactionResponse } from '../types/transaction';
-import { useTableParams } from './useTableParams';
+import { TableParams, useTableParams } from './useTableParams';
 
-export function useFetchTableTransactions(filter: FilterForm) {
+const transactionKeys = {
+  all: () => ['transactions'] as const,
+  lists: () => [...transactionKeys.all(), 'list'] as const,
+  list: (params: TableParams) => [...transactionKeys.lists(), params] as const,
+};
+
+export function useTransactions() {
   const { params } = useTableParams();
 
   return useQuery<TransactionResponse>({
-    queryKey: ['transactions/list', { ...params, filter }],
-    queryFn: () => fetchTableTransaction(params, filter),
+    queryKey: transactionKeys.list(params),
+    queryFn: () => fetchTransactions(params),
   });
 }
-
-// --------------
 
 export function useCreateTransaction() {
   const queryClient = useQueryClient();
@@ -30,105 +32,47 @@ export function useCreateTransaction() {
     mutationFn: createTransaction,
     onSuccess: () => {
       toast.success('Transação registrada com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['transactions/list'] });
+
+      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() });
     },
   });
 }
 
-export function useEditTransaction() {
+export function useUpdateTransaction() {
   const queryClient = useQueryClient();
 
-  const {
-    params: { page },
-  } = useTableParams();
-
   return useMutation({
-    mutationFn: editTransaction,
-    onSuccess: (data) => {
+    mutationFn: updateTransaction,
+    onSuccess: () => {
       toast.success('Transação editada com sucesso!');
 
-      queryClient.setQueriesData({ queryKey: ['transactions/list', { page }] }, (oldData: TransactionResponse) => {
-        return {
-          rows: oldData.rows.map((transaction) => {
-            if (transaction.id === data.id) {
-              return data;
-            }
-            return transaction;
-          }),
-        };
-      });
+      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() });
     },
   });
 }
 
 export function useDeleteTransaction() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  const {
-    params: { page },
-  } = useTableParams();
 
   return useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
-      toast.success('Transação removido com sucesso!');
+      toast.success('Transação removida com sucesso!');
 
-      const queries = queryClient.getQueriesData<TransactionResponse>({
-        queryKey: ['transactions/list', { page }],
-        type: 'active',
-      });
-
-      const isLastItemOnPage = queries.some(([, data]) => data?.rows?.length === 1);
-      const canGoBackPage = page > 1 && isLastItemOnPage;
-
-      if (canGoBackPage) {
-        queryClient
-          .invalidateQueries({
-            queryKey: ['transactions/list', { page: page - 1 }],
-          })
-          .then(() => {
-            navigate(`?page=${page - 1}`);
-          });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ['transactions/list'] });
-      }
+      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() });
     },
   });
 }
 
-export function useDeleteManyTransactions() {
+export function useBulkDeleteTransactions() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  const {
-    params: { page },
-  } = useTableParams();
 
   return useMutation({
-    mutationFn: deleteManyTransactions,
+    mutationFn: bulkDeleteTransactions,
     onSuccess: () => {
       toast.success('Transações removidas com sucesso!');
 
-      const queries = queryClient.getQueriesData<TransactionResponse>({
-        queryKey: ['transactions/list', { page }],
-        type: 'active',
-      });
-
-      const isLastItemOnPage = queries.some(([, data]) => data?.rows?.length === 1);
-      const canGoBackPage = page > 1 && isLastItemOnPage;
-
-      if (canGoBackPage) {
-        queryClient
-          .invalidateQueries({
-            queryKey: ['transactions/list', { page: page - 1 }],
-          })
-          .then(() => {
-            navigate(`?page=${page - 1}`);
-          });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ['transactions/list'] });
-      }
+      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() });
     },
   });
 }

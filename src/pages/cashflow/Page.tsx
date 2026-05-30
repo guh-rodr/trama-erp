@@ -10,6 +10,7 @@ import { convertToDecimal } from '../../functions/currency';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
+import { useTransactions } from '../../hooks/useTransactions';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { TransactionRow } from '../../types/transaction';
 import { TRANSACTION_CATEGORIES } from '../../utils/transactionCategories';
@@ -58,6 +59,8 @@ const filterFields: FilterFieldProps[] = [
 
 export function CashflowPage() {
   usePageTitle('Fluxo de Caixa');
+
+  const { data: transactions, isFetching, isError, refetch } = useTransactions();
 
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
@@ -135,7 +138,10 @@ export function CashflowPage() {
       </PageActions>
 
       <CashflowTable
-        filter={filter}
+        data={transactions}
+        isError={isError}
+        isFetching={isFetching}
+        refetch={refetch}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onEdit={onEdit}

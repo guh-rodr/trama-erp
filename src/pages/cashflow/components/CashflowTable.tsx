@@ -5,20 +5,31 @@ import { TableFooter } from '../../../components/Table/TableFooter';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { TableRowsSkeleton } from '../../../components/TableRowsSkeleton';
 import { useTableHelper } from '../../../hooks/useTableHelper';
-import { useFetchTableTransactions } from '../../../hooks/useTransactions';
-import { FilterForm } from '../../../types/filters';
+import { TransactionResponse } from '../../../types/transaction';
 import { getCashflowColumns } from './CashflowColumns';
 
 type RowActions = Parameters<typeof getCashflowColumns>[0];
 
 interface Props extends RowActions {
-  filter: FilterForm;
+  data?: TransactionResponse;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
 }
 
-export function CashflowTable({ selectedRows, onSelectionChange, filter, onEdit, onViewSaleInfo, onDelete }: Props) {
-  const { data, isFetching, isError, refetch } = useFetchTableTransactions(filter);
+export function CashflowTable({
+  data,
+  isFetching,
+  isError,
+  refetch,
+  selectedRows,
+  onSelectionChange,
+  onEdit,
+  onViewSaleInfo,
+  onDelete,
+}: Props) {
   const columns = useMemo(() => getCashflowColumns({ onEdit, onDelete, onViewSaleInfo }), []);
 
   const table = useTableHelper({
