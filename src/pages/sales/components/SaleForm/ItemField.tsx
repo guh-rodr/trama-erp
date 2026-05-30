@@ -5,7 +5,7 @@ import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../../components/CurrencyInput';
 import { convertToDecimal } from '../../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../../hooks/useCategories';
-import { useFetchProductVariants } from '../../../../hooks/useProducts';
+import { useProductVariants } from '../../../../hooks/useProducts';
 import { SaleForm } from '../../../../types/sale';
 import { COLORS } from '../../../../utils/colors';
 
@@ -39,7 +39,7 @@ export function ItemField({ index, control, canRemove, onToggleProduct, onAdd, o
 
   const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
 
-  const { data: variants } = useFetchProductVariants({ id: productId });
+  const { data: variants } = useProductVariants({ id: productId });
 
   const variantsOptions = useMemo(
     () =>

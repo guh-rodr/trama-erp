@@ -4,7 +4,7 @@ import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
 import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
-import { useFetchProductVariants } from '../../../hooks/useProducts';
+import { useProductVariants } from '../../../hooks/useProducts';
 import { useFetchStockMovementsFromProduct } from '../../../hooks/useStockMovement';
 import { ProductVariant } from '../../../types/product';
 import { StockMovementFetchParams } from '../../../types/stock-movement';
@@ -42,7 +42,7 @@ export function ProductInfoMovements({ id }: Props) {
   const [filter, setFilters] = useState<StockMovementFetchParams>({ productId: id, variantId: '', type: '' });
 
   const { data: stockMovementsData, isFetching, isError } = useFetchStockMovementsFromProduct(filter);
-  const { data: variants, status: variantsFetchStatus } = useFetchProductVariants({ id });
+  const { data: variants, status: variantsFetchStatus } = useProductVariants({ id });
 
   const variantsOptions =
     useMemo(

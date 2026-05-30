@@ -1,20 +1,25 @@
 import { RowSelectionState } from '@tanstack/react-table';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { DataTable } from '../../../components/DataTable';
-import { useFetchTableProducts } from '../../../hooks/useProducts';
-import { FilterForm } from '../../../types/filters';
+import { ProductResponse } from '../../../types/product';
 import { getProductsColumns } from './ProductsColumns';
 
 type RowActions = Parameters<typeof getProductsColumns>[0];
 
 interface Props extends RowActions {
-  filter: FilterForm;
+  data?: ProductResponse;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
 }
 
 export function ProductsTable({
-  filter,
+  data,
+  isFetching,
+  isError,
+  refetch,
   selectedRows,
   onSelectionChange,
   onCreateStockMovement,
@@ -22,7 +27,6 @@ export function ProductsTable({
   onEdit,
   onDelete,
 }: Props) {
-  const { data, isFetching, isError, refetch } = useFetchTableProducts(filter);
   const columns = useMemo(() => getProductsColumns({ onCreateStockMovement, onViewInfo, onEdit, onDelete }), []);
 
   return (

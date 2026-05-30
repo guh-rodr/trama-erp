@@ -9,6 +9,7 @@ import { useDialog } from '../../contexts/dialog/dialog-context';
 import { useCategoriesAutocomplete } from '../../hooks/useCategories';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useProducts } from '../../hooks/useProducts';
 import { useRowSelection } from '../../hooks/useRowSelection';
 import { CategoryItem } from '../../types/category';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
@@ -21,6 +22,7 @@ import { StockMovementFormDrawer } from './components/StockMovementDrawer';
 export function ProductsPage() {
   usePageTitle('Produtos');
 
+  const { data: products, isFetching, isError, refetch } = useProducts();
   const { data: categories } = useCategoriesAutocomplete({ fetchOnMount: true, canFetchModels: false });
   const options = useMemo(() => categories?.map(({ id, name }) => ({ label: name, value: id })) ?? [], [categories]);
 
@@ -110,7 +112,10 @@ export function ProductsPage() {
       </PageActions>
 
       <ProductsTable
-        filter={filter}
+        data={products}
+        isError={isError}
+        isFetching={isFetching}
+        refetch={refetch}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onCreateStockMovement={onCreateStockMovement}

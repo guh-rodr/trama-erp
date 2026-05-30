@@ -11,7 +11,7 @@ import { LoadingNotification } from '../../../components/LoadingNotification';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { convertToDecimal } from '../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../hooks/useCategories';
-import { useCreateProduct, useFetchProduct, useUpdateProduct } from '../../../hooks/useProducts';
+import { useCreateProduct, useProduct, useUpdateProduct } from '../../../hooks/useProducts';
 import { CategoryItem } from '../../../types/category';
 import { ProductForm, ProductItem, ProductVariantForm } from '../../../types/product';
 import { CategoryForm } from './CategoryForm';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCreate }: Props) {
-  const { data: defaultProduct, isFetching } = useFetchProduct({ id: defaultProductId });
+  const { data: defaultProduct, isFetching } = useProduct({ id: defaultProductId });
 
   const isEditMode = !!defaultProduct;
 

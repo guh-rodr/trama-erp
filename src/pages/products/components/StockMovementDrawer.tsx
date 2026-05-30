@@ -13,7 +13,7 @@ import { LoadingNotification } from '../../../components/LoadingNotification';
 import { Textarea } from '../../../components/Textarea';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
 import { formatToReal } from '../../../functions/currency';
-import { useFetchProductVariants } from '../../../hooks/useProducts';
+import { useProductVariants } from '../../../hooks/useProducts';
 import { useCreateStockMovement } from '../../../hooks/useStockMovement';
 import { getTodayDate } from '../../../lib/date';
 import { ProductVariant } from '../../../types/product';
@@ -35,7 +35,7 @@ interface InnerProps {
 const currentDate = getTodayDate();
 
 export function StockMovementFormDrawer({ productId, productName, currentStock }: Props) {
-  const { data: variants, isFetching } = useFetchProductVariants({ id: productId });
+  const { data: variants, isFetching } = useProductVariants({ id: productId });
 
   if (isFetching || !variants) {
     return <LoadingNotification />;

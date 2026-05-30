@@ -1,4 +1,3 @@
-import { FilterForm } from '../components/Filter/Filter';
 import { TableParams } from '../hooks/useTableParams';
 import { api } from '../lib/api';
 import { ProductForm } from '../types/product';
@@ -14,7 +13,7 @@ export async function fetchProduct(id: string) {
   return response.data;
 }
 
-export async function fetchTableProducts(params: TableParams, filter: FilterForm) {
+export async function fetchProducts({ filter, ...params }: TableParams) {
   const response = await api.post(`${API_PATH}/list`, filter, { params });
   return response.data;
 }
