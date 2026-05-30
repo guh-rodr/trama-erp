@@ -7,16 +7,15 @@ import { Input } from '../../../components/Input';
 import { Label } from '../../../components/Label';
 import { Textarea } from '../../../components/Textarea';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useCreateCustomer, useEditCustomer } from '../../../hooks/useCustomers';
+import { useCreateCustomer, useUpdateCustomer } from '../../../hooks/useCustomers';
 import type { CustomerForm } from '../../../types/customer';
 
 interface Props {
   onCreate?: (customerId: string) => void;
   defaultValues?: CustomerForm;
-  creationQueryType: 'list' | 'autocomplete';
 }
 
-export function CustomerFormModal({ onCreate, creationQueryType, defaultValues }: Props) {
+export function CustomerFormModal({ onCreate, defaultValues }: Props) {
   const { closeDialog } = useDialog();
   const { handleSubmit, register, formState } = useForm<CustomerForm>({
     defaultValues: defaultValues,
@@ -24,10 +23,8 @@ export function CustomerFormModal({ onCreate, creationQueryType, defaultValues }
 
   const navigate = useNavigate();
 
-  const { mutate: editCustomerMutate, isPending: isPendingUpdate } = useEditCustomer();
-  const { mutate: createCustomerMutate, isPending: isPendingCreate } = useCreateCustomer({
-    queryType: creationQueryType,
-  });
+  const { mutate: updateCustomerMutate, isPending: isPendingUpdate } = useUpdateCustomer();
+  const { mutate: createCustomerMutate, isPending: isPendingCreate } = useCreateCustomer();
 
   const onError = useCallback(() => {
     toast.error('Existem campos vazios ou inválidos.', { id: 'form-error' });
@@ -35,7 +32,7 @@ export function CustomerFormModal({ onCreate, creationQueryType, defaultValues }
 
   const onSubmit: SubmitHandler<unknown> = (data) => {
     if (defaultValues) {
-      return editCustomerMutate(data as CustomerForm, {
+      return updateCustomerMutate(data as CustomerForm, {
         onSuccess: () => {
           closeDialog();
         },

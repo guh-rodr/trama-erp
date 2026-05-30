@@ -6,7 +6,7 @@ import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { Button } from '../../../../components/Button';
 import { Input } from '../../../../components/Input';
 import { useDialog } from '../../../../contexts/dialog/dialog-context';
-import { useCustomersAutocomplete } from '../../../../hooks/useCustomers';
+import { useCustomersOptions } from '../../../../hooks/useCustomers';
 import { useCreateSale } from '../../../../hooks/useSales';
 import { getTodayDate } from '../../../../lib/date';
 import { CustomerRow } from '../../../../types/customer';
@@ -68,7 +68,7 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
     );
   };
 
-  const { data: customers, status, enableFetch } = useCustomersAutocomplete({ search: customer.query });
+  const { data: customers, status, enableFetch } = useCustomersOptions({ search: customer.query });
 
   const mappedCustomers = customers
     ? customers.map((customer) => ({
@@ -88,9 +88,7 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
     openDialog({
       type: 'modal',
       title: 'Adicionar novo cliente',
-      content: (
-        <CustomerFormModal creationQueryType="autocomplete" onCreate={(newId) => setValue('customerId', newId)} />
-      ),
+      content: <CustomerFormModal onCreate={(newId) => setValue('customerId', newId)} />,
     });
   };
 

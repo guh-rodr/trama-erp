@@ -1,16 +1,14 @@
 import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatDate } from '../../../functions/formatDate';
-import { useFetchCustomerOverview } from '../../../hooks/useCustomers';
+import { useCustomerOverview } from '../../../hooks/useCustomers';
 
 interface Props {
   id: string;
 }
 
 export function CustomerInfoOverview({ id }: Props) {
-  const { data, isLoading, isError, isSuccess } = useFetchCustomerOverview({
-    id,
-  });
+  const { data, isLoading, isError, isSuccess } = useCustomerOverview({ id });
 
   return (
     <div className="mt-4 space-y-1">

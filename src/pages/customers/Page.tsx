@@ -5,6 +5,7 @@ import { Filter } from '../../components/Filter/Filter';
 import { PageActions } from '../../components/PageActions/PageActions';
 import { SearchBar } from '../../components/SearchBar';
 import { useDialog } from '../../contexts/dialog/dialog-context';
+import { useCustomers } from '../../hooks/useCustomers';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
@@ -47,6 +48,8 @@ const filterFields: FilterFieldProps[] = [
 export function CustomersPage() {
   usePageTitle('Clientes');
 
+  const { data: customers, isFetching, isError, refetch } = useCustomers();
+
   const { selectedRows, selectedRowsId, clearSelectedRows, setSelectedRows } = useRowSelection();
   const { openDialog } = useDialog();
 
@@ -68,7 +71,7 @@ export function CustomersPage() {
     openDialog({
       title: 'Editar informações do cliente',
       type: 'modal',
-      content: <CustomerFormModal creationQueryType="list" defaultValues={defaultValues} />,
+      content: <CustomerFormModal defaultValues={defaultValues} />,
     });
   };
 
@@ -100,7 +103,7 @@ export function CustomersPage() {
     openDialog({
       title: 'Adicionar um novo cliente',
       type: 'modal',
-      content: <CustomerFormModal creationQueryType="list" onCreate={resetFilter} />,
+      content: <CustomerFormModal onCreate={resetFilter} />,
     });
   };
 
@@ -134,7 +137,10 @@ export function CustomersPage() {
       </PageActions>
 
       <CustomersTable
-        filter={filter}
+        data={customers}
+        isError={isError}
+        isFetching={isFetching}
+        refetch={refetch}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         onEdit={onEdit}

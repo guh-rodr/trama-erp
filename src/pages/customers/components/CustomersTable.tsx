@@ -1,28 +1,32 @@
 import { RowSelectionState } from '@tanstack/react-table';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { DataTable } from '../../../components/DataTable';
-import { FilterForm } from '../../../components/Filter/Filter';
-import { useFetchTableCustomers } from '../../../hooks/useCustomers';
+import { CustomerResponse } from '../../../types/customer';
 import { getCustomersColumns } from './CustomersColumns';
 
 type RowActions = Parameters<typeof getCustomersColumns>[0];
 
 interface Props extends RowActions {
-  filter: FilterForm;
+  data?: CustomerResponse;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
 }
 
 export function CustomersTable({
+  data,
+  isFetching,
+  isError,
+  refetch,
   selectedRows,
   onSelectionChange,
-  filter,
   onEdit,
   onViewInfo,
   onCreateSale,
   onDelete,
 }: Props) {
-  const { data, isFetching, isError, refetch } = useFetchTableCustomers(filter);
   const columns = useMemo(() => getCustomersColumns({ onEdit, onViewInfo, onCreateSale, onDelete }), []);
 
   return (

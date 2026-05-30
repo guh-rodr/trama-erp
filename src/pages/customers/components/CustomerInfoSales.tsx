@@ -6,7 +6,7 @@ import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
 import { formatDate } from '../../../functions/formatDate';
-import { useFetchCustomerSales } from '../../../hooks/useCustomers';
+import { useCustomerPurchases } from '../../../hooks/useCustomers';
 
 interface Props {
   id: string;
@@ -15,7 +15,7 @@ interface Props {
 export function CustomerInfoSales({ id }: Props) {
   const [expandedSaleId, setExpandedSaleId] = useState('');
 
-  const { data: sales, isLoading, isError, isSuccess } = useFetchCustomerSales({ id });
+  const { data: sales, isLoading, isError, isSuccess } = useCustomerPurchases({ id });
 
   const handleExpandSale = (id: string) => {
     if (id === expandedSaleId) {

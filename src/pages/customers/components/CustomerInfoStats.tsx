@@ -1,7 +1,7 @@
 import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
-import { useFetchCustomerStats } from '../../../hooks/useCustomers';
+import { useCustomerStats } from '../../../hooks/useCustomers';
 import { COLORS } from '../../../utils/colors';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function CustomerInfoStats({ id }: Props) {
-  const { data, isLoading, isError, isSuccess } = useFetchCustomerStats({ id });
+  const { data, isLoading, isError, isSuccess } = useCustomerStats({ id });
 
   const colorName = COLORS.find((c) => c.value === data?.preferences.topColor)?.label;
 

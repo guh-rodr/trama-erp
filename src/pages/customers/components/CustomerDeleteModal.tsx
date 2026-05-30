@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../../components/Button';
 import { ToggleSwitch } from '../../../components/ToggleSwitch';
 import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useDeleteCustomer, useDeleteManyCustomers } from '../../../hooks/useCustomers';
+import { useBulkDeleteCustomers, useDeleteCustomer } from '../../../hooks/useCustomers';
 import { CustomerRow } from '../../../types/customer';
 
 interface Props {
@@ -15,7 +15,7 @@ export function CustomerDeleteModal({ onDelete, customers }: Props) {
 
   const { closeDialog } = useDialog();
   const { mutate: deleteCustomerMutate, isPending: isPendingDelete } = useDeleteCustomer();
-  const { mutate: deleteManyCustomersMutate, isPending: isPendingManyDelete } = useDeleteManyCustomers();
+  const { mutate: deleteManyCustomersMutate, isPending: isPendingManyDelete } = useBulkDeleteCustomers();
 
   const isManyDelete = Array.isArray(customers) && customers.length > 1;
 
