@@ -8,12 +8,14 @@ import { useCategoriesAutocomplete } from '../../hooks/useCategories';
 import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
+import { useStockMovements } from '../../hooks/useStockMovement';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
 import { StockMovementsTable } from './components/StockMovementsTable';
 
 export function StockMovementsPage() {
   usePageTitle('Movimentações de Estoque');
 
+  const { data: stockMovements, isFetching, isError, refetch } = useStockMovements();
   const { data: categories, isFetching: isFetchingCategories } = useCategoriesAutocomplete({
     fetchOnMount: true,
     canFetchModels: true,
@@ -88,7 +90,10 @@ export function StockMovementsPage() {
       </PageActions>
 
       <StockMovementsTable
-        filter={filter}
+        data={stockMovements}
+        isError={isError}
+        isFetching={isFetching}
+        refetch={refetch}
         selectedRows={selectedRows}
         onSelectionChange={setSelectedRows}
         canShowBalanceCol={canShowBalanceCol}

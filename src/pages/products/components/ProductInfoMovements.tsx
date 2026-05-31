@@ -5,7 +5,7 @@ import { ErrorNotification } from '../../../components/ErrorNotification';
 import { LoadingNotification } from '../../../components/LoadingNotification';
 import { formatToReal } from '../../../functions/currency';
 import { useProductVariants } from '../../../hooks/useProducts';
-import { useFetchStockMovementsFromProduct } from '../../../hooks/useStockMovement';
+import { useProductStockMovements } from '../../../hooks/useStockMovement';
 import { ProductVariant } from '../../../types/product';
 import { StockMovementFetchParams } from '../../../types/stock-movement';
 import { COLORS } from '../../../utils/colors';
@@ -41,7 +41,7 @@ const getVariantName = (variant: Partial<ProductVariant>) => {
 export function ProductInfoMovements({ id }: Props) {
   const [filter, setFilters] = useState<StockMovementFetchParams>({ productId: id, variantId: '', type: '' });
 
-  const { data: stockMovementsData, isFetching, isError } = useFetchStockMovementsFromProduct(filter);
+  const { data: stockMovementsData, isFetching, isError } = useProductStockMovements(filter);
   const { data: variants, status: variantsFetchStatus } = useProductVariants({ id });
 
   const variantsOptions =

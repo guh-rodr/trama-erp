@@ -1,19 +1,28 @@
 import { RowSelectionState } from '@tanstack/react-table';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { DataTable } from '../../../components/DataTable';
-import { useFetchTableStockMovements } from '../../../hooks/useStockMovement';
-import { FilterForm } from '../../../types/filters';
+import { StockMovementResponse } from '../../../types/stock-movement';
 import { getStockMovementsColumns } from './StockMovementsColumns';
 
 interface Props {
-  filter: FilterForm;
+  data?: StockMovementResponse;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
   selectedRows: RowSelectionState;
   onSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
   canShowBalanceCol: boolean;
 }
 
-export function StockMovementsTable({ filter, selectedRows, onSelectionChange, canShowBalanceCol }: Props) {
-  const { data, isFetching, isError, refetch } = useFetchTableStockMovements(filter);
+export function StockMovementsTable({
+  data,
+  isFetching,
+  isError,
+  refetch,
+  selectedRows,
+  onSelectionChange,
+  canShowBalanceCol,
+}: Props) {
   const columns = useMemo(() => getStockMovementsColumns(canShowBalanceCol), [canShowBalanceCol]);
 
   return (
