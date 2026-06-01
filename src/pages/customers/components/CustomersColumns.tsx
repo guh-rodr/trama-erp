@@ -9,7 +9,7 @@ export const getCustomersColumns = (actions: {
   onEdit: (data: CustomerRow) => void;
   onViewInfo: (id: string) => void;
   onCreateSale: (data: CustomerRow) => void;
-  onDelete: (id: string, name: string) => void;
+  onDelete: (id: string) => void;
 }): ColumnDef<CustomerRow>[] => [
   {
     id: 'select',
@@ -93,7 +93,7 @@ export const getCustomersColumns = (actions: {
         </button>
         <button
           type="button"
-          onClick={() => actions.onDelete(row.original.id, row.original.name)}
+          onClick={() => actions.onDelete(row.original.id)}
           className="p-1 cursor-pointer text-neutral-400 rounded-lg border border-neutral-300 bg-neutral-50 hover:bg-red-500 hover:text-white transition-colors"
         >
           <TrashSimpleIcon weight="bold" size={16} />

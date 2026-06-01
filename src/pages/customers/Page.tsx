@@ -91,11 +91,11 @@ export function CustomersPage() {
     });
   };
 
-  const onDelete = (rowId: string, rowName: string) => {
+  const onDelete = (rowId: string) => {
     openDialog({
       title: 'Confirmar ação',
       type: 'modal',
-      content: <CustomerDeleteModal customers={[{ id: rowId, name: rowName }]} />,
+      content: <CustomerDeleteModal ids={[rowId]} />,
     });
   };
 
@@ -108,12 +108,10 @@ export function CustomersPage() {
   };
 
   const onDeleteSelectedRows = () => {
-    const ids = selectedRowsId.map((rowId) => ({ id: rowId }));
-
     openDialog({
       title: 'Confirmar ação',
       type: 'modal',
-      content: <CustomerDeleteModal onDelete={clearSelectedRows} customers={ids} />,
+      content: <CustomerDeleteModal onDelete={clearSelectedRows} ids={selectedRowsId} />,
     });
   };
 

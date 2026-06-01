@@ -45,15 +45,14 @@ export async function updateCustomer(data: CustomerForm) {
   return response.data;
 }
 
-export async function deleteCustomers({ id, canDeleteSales }: { id: string; canDeleteSales: boolean }) {
-  const response = await api.delete(`${API_PATH}/${id}`, { params: { deleteSales: canDeleteSales } });
+export async function deleteCustomers({ id }: { id: string }) {
+  const response = await api.delete(`${API_PATH}/${id}`);
   return response.data;
 }
 
-export async function bulkDeleteCustomers({ ids, canDeleteSales }: { ids: string[]; canDeleteSales: boolean }) {
+export async function bulkDeleteCustomers({ ids }: { ids: string[] }) {
   const response = await api.delete(`${API_PATH}`, {
     data: { ids },
-    params: { deleteSales: canDeleteSales },
   });
   return response.data;
 }
