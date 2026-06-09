@@ -63,14 +63,19 @@ export function Autocomplete({
     }
 
     if (selectedOption) {
-      setInputValue(selectedOption.label);
-      setDebouncedValue(selectedOption.label);
+      const label = getOptionInputValue(selectedOption);
+
+      setInputValue(label);
+      setDebouncedValue(label);
       return;
     }
 
     if (lastOption && lastOption.value === value) {
-      setInputValue(lastOption.label);
-      setDebouncedValue(lastOption.label);
+      const label = getOptionInputValue(lastOption);
+
+      setInputValue(label);
+      setDebouncedValue(label);
+
       return;
     }
 
