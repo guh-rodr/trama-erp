@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Control, UseFormResetField, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { ToggleSwitch } from '../../../../components/ToggleSwitch';
 import { convertToCents } from '../../../../functions/currency';
 import { SaleForm } from '../../../../types/sale';
 import { InstallmentContainer } from '../InstallmentContainer';
 
-interface Props {
-  control: Control<SaleForm>;
-  resetField: UseFormResetField<SaleForm>;
-}
-
-export function InstallmentToggleForm({ control, resetField }: Props) {
+export function InstallmentToggleForm() {
+  const { control, resetField } = useFormContext<SaleForm>();
   const [isEnabled, setIsEnabled] = useState(false);
 
   const [items, installment] = useWatch({

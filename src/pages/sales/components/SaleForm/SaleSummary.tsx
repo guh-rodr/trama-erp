@@ -1,12 +1,9 @@
-import { Control, get, useWatch } from 'react-hook-form';
+import { get, useFormContext, useWatch } from 'react-hook-form';
 import { convertToCents, formatToReal } from '../../../../functions/currency';
 import { SaleForm } from '../../../../types/sale';
 
-interface Props {
-  control: Control<SaleForm>;
-}
-
-export function SaleSummary({ control }: Props) {
+export function SaleSummary() {
+  const { control } = useFormContext<SaleForm>();
   const items = useWatch({ control, name: 'items' });
 
   const installment = useWatch({ control, name: 'installment' }) || {
