@@ -34,13 +34,17 @@ export function SaleItemRow({ index, remove }: Props) {
     canFetchModels: true,
   });
 
-  const options =
-    data?.flatMap((category) =>
-      category.products!.map((product) => ({
-        label: product.name,
-        value: product.id,
-        group: category.name,
-      })),
+  const categoriesOptions =
+    useMemo(
+      () =>
+        data?.flatMap((category) =>
+          category.products!.map((product) => ({
+            label: product.name,
+            value: product.id,
+            group: category.name,
+          })),
+        ),
+      [data],
     ) ?? [];
 
   const { data: variants } = useProductVariants({ id: productId });
@@ -68,7 +72,7 @@ export function SaleItemRow({ index, remove }: Props) {
               value={field.value}
               placeholder="Produto..."
               status={status}
-              options={options}
+              options={categoriesOptions}
               onOpen={fetchData}
               onChangeInput={setCategorySearch}
               onChangeOption={(value) => {
