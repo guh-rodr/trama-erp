@@ -6,6 +6,7 @@ import { CurrencyInput } from '../../../../components/CurrencyInput';
 import { convertToDecimal } from '../../../../functions/currency';
 import { useCategoriesAutocomplete } from '../../../../hooks/useCategories';
 import { useProductVariants } from '../../../../hooks/useProducts';
+import { ProductVariant } from '../../../../types/product';
 import { SaleForm } from '../../../../types/sale';
 import { COLORS } from '../../../../utils/colors';
 
@@ -14,9 +15,17 @@ interface Props {
   remove: UseFieldArrayRemove;
 }
 
+function getVariantLabel(variant: Partial<ProductVariant>) {
+  const isDefault = !variant.color && !variant.size;
+  const colorName = variant.color && COLORS.find((c) => c.value === variant.color)?.label;
+
+  return isDefault ? 'Padrão' : `${variant.size?.toUpperCase()} · ${colorName}`;
+}
+
 export function SaleItemRow({ index, remove }: Props) {
   const { control, setValue } = useFormContext<SaleForm>();
 
+  const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
   const [categorySearch, setCategorySearch] = useState('');
 
   const { data, status, fetchData } = useCategoriesAutocomplete({
@@ -34,21 +43,13 @@ export function SaleItemRow({ index, remove }: Props) {
       })),
     ) ?? [];
 
-  const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
-
   const { data: variants } = useProductVariants({ id: productId });
-
   const variantsOptions = useMemo(
     () =>
-      variants?.map((variant) => {
-        const isDefault = !variant.color && !variant.size;
-        const colorName = variant.color && COLORS.find((c) => c.value === variant.color)?.label;
-
-        return {
-          label: isDefault ? 'Variante padrão' : `${variant.size?.toUpperCase()} · ${colorName}`,
-          value: variant.id!,
-        };
-      }) ?? [],
+      variants?.map((variant) => ({
+        label: getVariantLabel(variant),
+        value: variant.id!,
+      })) ?? [],
     [variants],
   );
 
