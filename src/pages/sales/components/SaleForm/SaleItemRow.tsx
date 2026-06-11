@@ -1,5 +1,5 @@
 import { TrashIcon } from '@phosphor-icons/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, UseFieldArrayRemove, useFormContext, useWatch } from 'react-hook-form';
 import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../../components/CurrencyInput';
@@ -57,6 +57,23 @@ export function SaleItemRow({ index, remove }: Props) {
     [variants],
   );
 
+  const updateItemSalePrice = useCallback(
+    (variantId: string) => {
+      const variant = variants?.find((v) => v.id === variantId);
+      if (variant) {
+        setValue(`items.${index}.salePrice`, convertToDecimal(variant.salePrice!));
+      }
+    },
+    [variants],
+  );
+
+  useEffect(() => {
+    if (variants?.length === 1) {
+      setValue(`items.${index}.variantId`, variants[0].id!);
+      updateItemSalePrice(variants[0].id!);
+    }
+  }, [variants]);
+
   const selectedVariant = useMemo(() => variants?.find((v) => v.id === variantId), [variantId, variants]);
 
   return (
@@ -68,7 +85,7 @@ export function SaleItemRow({ index, remove }: Props) {
           rules={{ required: true }}
           render={({ field }) => (
             <Autocomplete
-              className="!w-full"
+              className="h-9 !w-full"
               value={field.value}
               placeholder="Produto..."
               status={status}
@@ -90,18 +107,14 @@ export function SaleItemRow({ index, remove }: Props) {
           rules={{ required: true }}
           render={({ field }) => (
             <Autocomplete
-              className="max-w-[160px]"
+              className="h-9 max-w-[160px]"
               value={field.value}
               placeholder="Variante..."
               status={status}
               readOnly
               onChangeOption={(value) => {
                 field.onChange(value);
-
-                const variant = variants?.find((v) => v.id === value);
-                if (variant) {
-                  setValue(`items.${index}.salePrice`, convertToDecimal(variant.salePrice!));
-                }
+                updateItemSalePrice(value);
               }}
               options={variantsOptions}
               renderOption={(option) => {
@@ -123,7 +136,7 @@ export function SaleItemRow({ index, remove }: Props) {
         <CurrencyInput
           disabled
           value={selectedVariant ? convertToDecimal(selectedVariant.costPrice!) : undefined}
-          className="max-w-[110px] disabled:opacity-50 disabled:border-neutral-300"
+          className="h-9 max-w-[110px] disabled:opacity-50 disabled:border-neutral-300"
         />
       </td>
 
@@ -136,7 +149,7 @@ export function SaleItemRow({ index, remove }: Props) {
             <CurrencyInput
               {...field}
               onValueChange={field.onChange}
-              className="max-w-[110px] disabled:opacity-50 disabled:border-neutral-300"
+              className="h-9 max-w-[110px] disabled:opacity-50 disabled:border-neutral-300"
             />
           )}
         />
