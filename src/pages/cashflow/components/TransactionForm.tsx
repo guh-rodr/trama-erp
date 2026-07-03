@@ -97,6 +97,7 @@ export function TransactionForm({ defaultValues, onCreate }: Props) {
           render={({ field }) => (
             <Autocomplete
               readOnly
+              key={flow}
               value={field.value}
               onChangeOption={field.onChange}
               options={TRANSACTION_CATEGORIES[flow]}
