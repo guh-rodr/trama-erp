@@ -26,7 +26,7 @@ export function SaleItemsTable() {
 
         <tbody className="relative">
           {fields.map((_, index) => (
-            <SaleItemRow index={index} remove={remove} />
+            <SaleItemRow index={index} canRemove={fields.length > 1} remove={remove} />
           ))}
         </tbody>
       </table>

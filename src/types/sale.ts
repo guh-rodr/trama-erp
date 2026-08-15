@@ -1,6 +1,6 @@
 import { CustomerRow } from './customer';
 
-export type SaleStatus = 'paid' | 'pending';
+export type SaleStatus = 'PAID' | 'PARTIAL' | 'PENDING';
 
 export interface SaleItem {
   id: string;
@@ -27,16 +27,23 @@ export interface SaleInstallment {
   paidAt: string;
 }
 
-export interface SaleInstallmentForm {
-  value: number;
-  paidAt: string;
-}
-
 export interface SaleForm {
   customerId: string;
+  paymentTerm: 'CASH' | 'INSTALLMENT' | 'TAB';
+  entry?: {
+    method: 'CASH' | 'PIX' | 'CREDIT_CARD' | 'DEBIT_CARD';
+    value: number;
+  };
+  receivables: {
+    dueDate?: string;
+    value?: number;
+  }[];
+  payments: {
+    method?: 'CASH' | 'PIX' | 'CREDIT_CARD' | 'DEBIT_CARD';
+    value?: number;
+  }[];
   items: SaleItemForm[];
   purchasedAt: string;
-  installment?: SaleInstallmentForm;
 }
 
 export interface SaleOverview {

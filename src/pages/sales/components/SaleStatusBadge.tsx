@@ -6,11 +6,15 @@ interface Style {
 }
 
 const STYLES: Record<SaleStatus, Style> = {
-  pending: {
+  PENDING: {
     label: 'Pendente',
+    styles: 'bg-neutral-200/30 text-neutral-500 border-neutral-200',
+  },
+  PARTIAL: {
+    label: 'Parcial',
     styles: 'bg-amber-200/30 text-amber-500 border-amber-200',
   },
-  paid: {
+  PAID: {
     label: 'Pago',
     styles: 'bg-emerald-200/30 text-emerald-500 border-emerald-200',
   },

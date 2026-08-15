@@ -1,40 +1,32 @@
-import { PlusIcon, UserIcon } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
-import { Controller, FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
+import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { Button } from '../../../../components/Button';
-import { Input } from '../../../../components/Input';
-import { Label } from '../../../../components/Label';
 import { useDialog } from '../../../../contexts/dialog/dialog-context';
-import { useCustomersOptions } from '../../../../hooks/useCustomers';
+import { calcSaleSummary } from '../../../../functions/calcSaleSummary';
 import { useCreateSale } from '../../../../hooks/useSales';
 import { getTodayDate } from '../../../../lib/date';
 import { CustomerRow } from '../../../../types/customer';
 import { SaleForm } from '../../../../types/sale';
-import { CustomerFormModal } from '../../../customers/components/CustomerFormModal';
-import { InstallmentToggleForm } from './InstallmentToggleForm';
-import { SaleItemsTable } from './SaleItemsTable';
+import { SaleFormOverviewTab } from './SaleFormOverviewTab';
+import { SalePaymentTab } from './SalePaymentTab';
 import { SaleSummary } from './SaleSummary';
-
-const currentDate = getTodayDate();
 
 interface Props {
   defaultCustomer?: Pick<CustomerRow, 'id' | 'name'>;
   onCreate?: () => void;
 }
 
+const currentDate = getTodayDate();
+
 export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
-  const [customer, setCustomer] = useState({ id: '', query: '' });
-
-  const { mutate } = useCreateSale();
-  const { openDialog, closeDialog } = useDialog();
-
-  const methods = useForm<SaleForm>({
+  const form = useForm<SaleForm>({
     defaultValues: {
       customerId: defaultCustomer?.id,
-      items: [{ productId: '' }],
-      installment: { paidAt: currentDate },
+      purchasedAt: currentDate,
+      items: [{}],
+      receivables: [],
+      payments: [],
     },
   });
 
@@ -42,92 +34,66 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
     toast.error('Existem campos vazios ou inválidos.', { id: 'form-error' });
   }, []);
 
+  const { mutate } = useCreateSale();
+  const { closeDialog } = useDialog();
+
+  const hasErrors = Object.keys(form.formState.errors).length > 0;
+
   const onSubmit: SubmitHandler<SaleForm> = (data) => {
-    const installment = typeof data.installment?.value === 'number' ? data.installment : undefined;
+    const { total, received } = calcSaleSummary({
+      entry: data.entry,
+      items: data.items,
+      payments: data.payments,
+      receivables: data.receivables,
+    });
 
-    mutate(
-      { ...data, installment },
-      {
-        onSuccess: () => {
-          closeDialog();
-          onCreate?.();
-        },
+    if (received > total || hasErrors) return;
+
+    mutate(data, {
+      onSuccess: () => {
+        closeDialog();
+        onCreate?.();
       },
-    );
-  };
-
-  const { data: customers, status, enableFetch } = useCustomersOptions({ search: customer.query });
-
-  const mappedCustomers = customers
-    ? customers.map((customer) => ({
-        label: customer.name,
-        value: customer.id,
-      }))
-    : [];
-
-  const options = [
-    ...(defaultCustomer && !mappedCustomers.some((c) => c.value === defaultCustomer.id)
-      ? [{ label: defaultCustomer.name, value: defaultCustomer.id }]
-      : []),
-    ...mappedCustomers,
-  ];
-
-  const handleAddCustomer = () => {
-    openDialog({
-      type: 'modal',
-      title: 'Adicionar novo cliente',
-      content: <CustomerFormModal onCreate={(newId) => methods.setValue('customerId', newId)} />,
     });
   };
 
-  const handleChangeInput = (value: string) => {
-    setCustomer((state) => ({ ...state, query: value }));
-  };
+  const [tab, setTab] = useState<'overview' | 'payment'>('overview');
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="h-full flex flex-col justify-between">
-        <div className="space-y-1 overflow-y-auto h-full">
-          <Controller
-            name="customerId"
-            control={methods.control}
-            render={({ field }) => (
-              <Autocomplete
-                placeholder="Cliente"
-                value={field.value}
-                status={status}
-                onOpen={enableFetch}
-                onChangeInput={handleChangeInput}
-                onChangeOption={field.onChange}
-                options={options}
-                renderOption={(option) => (
-                  <span>
-                    <UserIcon weight="bold" className="inline mr-2" />
-                    {option.label}
-                  </span>
-                )}
-              >
-                <Autocomplete.Action onClick={handleAddCustomer}>
-                  <PlusIcon weight="bold" />
-                  Novo cliente
-                </Autocomplete.Action>
-              </Autocomplete>
-            )}
-          />
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="h-full flex flex-col justify-between space-y-4">
+        <div className="flex gap-5 border-b pt-4 text-neutral-600 border-neutral-300">
+          <button
+            type="button"
+            onClick={() => setTab('overview')}
+            data-enabled={tab === 'overview'}
+            className="border-b-2 py-1 border-transparent data-enabled:border-black data-enabled:text-black"
+          >
+            Geral
+          </button>
 
-          <Input type="date" defaultValue={currentDate} {...methods.register('purchasedAt', { required: true })} />
+          <button
+            type="button"
+            onClick={() => setTab('payment')}
+            data-enabled={tab === 'payment'}
+            className="border-b-2 py-1 border-transparent data-enabled:border-black data-enabled:text-black"
+          >
+            Pagamento
+          </button>
+        </div>
 
-          <div className="mt-2">
-            <Label>Itens</Label>
-
-            <SaleItemsTable />
+        <div className="h-full">
+          <div className={`h-full ${tab === 'overview' ? '' : 'hidden'}`}>
+            <SaleFormOverviewTab />
+          </div>
+          <div className={`h-full ${tab === 'payment' ? '' : 'hidden'}`}>
+            <SalePaymentTab />
           </div>
         </div>
 
+        <code>{JSON.stringify(form.formState.errors, null, 2)}</code>
         <div>
           <SaleSummary />
-
-          <InstallmentToggleForm />
 
           <Button type="submit" isLoading={false} className="w-full mt-4 text-center">
             Finalizar venda

@@ -12,6 +12,7 @@ import { COLORS } from '../../../../utils/colors';
 
 interface Props {
   index: number;
+  canRemove: boolean;
   remove: UseFieldArrayRemove;
 }
 
@@ -22,7 +23,7 @@ function getVariantLabel(variant: Partial<ProductVariant>) {
   return isDefault ? 'Padrão' : `${variant.size?.toUpperCase()} · ${colorName}`;
 }
 
-export function SaleItemRow({ index, remove }: Props) {
+export function SaleItemRow({ index, canRemove, remove }: Props) {
   const { control, setValue } = useFormContext<SaleForm>();
 
   const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
@@ -159,6 +160,7 @@ export function SaleItemRow({ index, remove }: Props) {
         <button
           className="text-red-400 rounded-md enabled:hover:bg-red-100/40 size-full p-3 transition-colors mr-0 ml-auto disabled:opacity-50 disabled:!cursor-default"
           type="button"
+          disabled={!canRemove}
           onClick={() => remove(index)}
         >
           <TrashIcon size={16} weight="bold" />

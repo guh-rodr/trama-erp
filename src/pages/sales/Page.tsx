@@ -73,6 +73,7 @@ export function SalesPage() {
     openDialog({
       title: 'Adicionar uma nova venda',
       type: 'drawer',
+      width: '35vw',
       content: <SaleFormDrawer onCreate={resetFilter} />,
     });
   };
