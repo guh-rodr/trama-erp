@@ -1,5 +1,6 @@
+import { TableParams } from '../hooks/useTableParams';
 import { api } from '../lib/api';
-import { CreateCategoryForm, EditCategoryForm } from '../types/category';
+import { CategoryForm } from '../types/category';
 
 const API_PATH = '/categories';
 
@@ -9,8 +10,8 @@ export interface FetchCategoriesParams {
   search?: string;
 }
 
-export async function fetchCategories({ canFetchModels }: FetchCategoriesParams) {
-  const response = await api.get(`${API_PATH}?fetchModels=${canFetchModels}`);
+export async function fetchCategories({ filter, ...params }: TableParams) {
+  const response = await api.post(`${API_PATH}/list`, filter, { params });
   return response.data;
 }
 
@@ -19,12 +20,17 @@ export async function fetchCategoriesAutocomplete({ search, canFetchModels }: Fe
   return response.data;
 }
 
-export async function createCategory(data: CreateCategoryForm) {
+export async function createCategory(data: CategoryForm) {
   const response = await api.post(API_PATH, data);
   return response.data;
 }
 
-export async function editCategory({ id, ...data }: EditCategoryForm) {
+export async function updateCategory({ id, ...data }: CategoryForm) {
   const response = await api.patch(`${API_PATH}/${id}`, data);
+  return response.data;
+}
+
+export async function deleteCategory({ id }: { id: string }) {
+  const response = await api.delete(`${API_PATH}/${id}`);
   return response.data;
 }

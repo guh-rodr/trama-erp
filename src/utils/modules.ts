@@ -4,6 +4,7 @@ import {
   PackageIcon,
   ShoppingBagIcon,
   StackIcon,
+  TreeStructureIcon,
   UsersIcon,
 } from '@phosphor-icons/react';
 
@@ -14,6 +15,13 @@ export const MODULES = [
     description: 'Cadastro completo e histórico de compras',
     icon: UsersIcon,
     href: '/dashboard/customers',
+  },
+  {
+    key: 'categories',
+    name: 'Categorias',
+    description: 'Gestão de categorização dos produtos',
+    icon: TreeStructureIcon,
+    href: '/dashboard/categories',
   },
   {
     key: 'products',

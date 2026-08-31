@@ -4,32 +4,26 @@ import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 import {
   createCategory,
-  editCategory,
   fetchCategories,
   fetchCategoriesAutocomplete,
   FetchCategoriesParams,
+  updateCategory,
 } from '../services/category';
-import { CategoryItem } from '../types/category';
+import { CategoryResponse } from '../types/category';
+import { TableParams, useTableParams } from './useTableParams';
 
-export function useFetchCategories({ canFetchModels }: FetchCategoriesParams) {
-  return useQuery<CategoryItem[]>({
-    queryKey: ['categories'],
-    queryFn: () => fetchCategories({ fetchOnMount: true, canFetchModels }),
-  });
-}
+const categoryKeys = {
+  all: () => ['categories'] as const,
+  lists: () => [...categoryKeys.all(), 'list'] as const,
+  list: (params: TableParams) => [...categoryKeys.lists(), params] as const,
+};
 
-export function useCreateCategory() {
-  const queryClient = useQueryClient();
+export function useCategories() {
+  const { params } = useTableParams();
 
-  return useMutation({
-    mutationFn: createCategory,
-    onSuccess: () => {
-      toast.success('Categoria registrada com sucesso!');
-
-      queryClient.invalidateQueries({
-        queryKey: ['categories'],
-      });
-    },
+  return useQuery<CategoryResponse>({
+    queryKey: categoryKeys.list(params),
+    queryFn: () => fetchCategories(params),
   });
 }
 
@@ -40,7 +34,7 @@ export function useCategoriesAutocomplete(props: FetchCategoriesParams) {
     setEnabled(true);
   };
 
-  const query = useQuery<CategoryItem[]>({
+  const query = useQuery<unknown[]>({
     queryKey: ['categories', 'autocomplete', { search: props.search, canFetchModels: props.canFetchModels }],
     queryFn: () => fetchCategoriesAutocomplete(props),
     enabled,
@@ -49,26 +43,28 @@ export function useCategoriesAutocomplete(props: FetchCategoriesParams) {
   return { ...query, fetchData };
 }
 
-export function useEditCategory() {
+export function useCreateCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: editCategory,
-    onSuccess: (data: CategoryItem) => {
+    mutationFn: createCategory,
+    onSuccess: () => {
+      toast.success('Categoria registrada com sucesso!');
+
+      queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateCategory,
+    onSuccess: () => {
       toast.success('Categoria editada com sucesso!');
 
-      queryClient.setQueryData(['categories'], (previous: CategoryItem[]) => {
-        return previous.map((cat) => {
-          if (cat.id === data.id) {
-            return {
-              ...cat,
-              name: data.name,
-            };
-          } else {
-            return cat;
-          }
-        });
-      });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
     },
   });
 }
@@ -77,15 +73,11 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => {
-      return api.delete(`/categories/${id}`);
-    },
-    onSuccess: ({ data }) => {
+    mutationFn: ({ id }: { id: string }) => api.delete(`/categories/${id}`),
+    onSuccess: () => {
       toast.success('Categoria excluída com sucesso.');
 
-      queryClient.setQueryData(['categories'], (previous: CategoryItem[]) => {
-        return previous.filter((category) => category.id !== data.id);
-      });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
     },
   });
 }

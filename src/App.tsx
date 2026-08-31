@@ -8,6 +8,7 @@ import { ProtectedRoute } from './pages/auth/components/ProtectedRoute';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { CashflowPage } from './pages/cashflow/Page';
+import { CategoriesPage } from './pages/categories/Page';
 import { CustomersPage } from './pages/customers/Page';
 import { HomePage } from './pages/home/Page';
 import { ProductsPage } from './pages/products/Page';
@@ -63,6 +64,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <CustomersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/categories"
+                element={
+                  <ProtectedRoute>
+                    <CategoriesPage />
                   </ProtectedRoute>
                 }
               />

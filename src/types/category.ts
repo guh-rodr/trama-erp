@@ -1,13 +1,16 @@
-import { ProductItem } from './product';
+export interface CategoryForm {
+  id?: string;
+  name: string;
+}
 
-export interface CategoryItem {
+export interface CategoryRow {
   id: string;
   name: string;
-  products: ProductItem[];
+  productCount: number;
 }
 
-export interface CreateCategoryForm {
-  name: string;
+export interface CategoryResponse {
+  pageCount: number;
+  rowCount: number;
+  rows: CategoryRow[];
 }
-
-export type EditCategoryForm = Pick<CategoryItem, 'id' | 'name'>;
