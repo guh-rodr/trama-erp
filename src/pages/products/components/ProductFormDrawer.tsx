@@ -1,4 +1,4 @@
-import { PlusIcon, TagIcon } from '@phosphor-icons/react';
+import { ArrowsCounterClockwiseIcon, PlusIcon, TagIcon } from '@phosphor-icons/react';
 import { useCallback, useMemo, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -56,7 +56,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
           id: defaultProduct.id,
           type: defaultProduct.isVariable ? 'variable' : 'simple',
           name: defaultProduct.name,
-          category: defaultCategory.id,
+          categoryId: defaultCategory.id,
           variants,
         };
       } else {
@@ -64,7 +64,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
           id: defaultProduct.id,
           type: defaultProduct.isVariable ? 'variable' : 'simple',
           name: defaultProduct.name,
-          category: defaultCategory.id,
+          categoryId: defaultCategory.id,
           costPrice: defaultProduct.costPrice ? convertToDecimal(defaultProduct.costPrice) : undefined,
           salePrice: defaultProduct.salePrice ? convertToDecimal(defaultProduct.salePrice) : undefined,
           quantity: defaultProduct.quantity,
@@ -74,7 +74,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
     } else {
       return {
         type: 'simple',
-        category: defaultCategory.id,
+        categoryId: defaultCategory.id,
         name: '',
         variants: [defaultVariant],
       };
@@ -94,7 +94,7 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
   });
 
   const openCategoryForm = () => {
-    const updateCategory = (id: string) => setValue('category', id);
+    const updateCategory = (id: string) => setValue('categoryId', id);
 
     openDialog({
       title: 'Adicionar nova categoria',
@@ -193,21 +193,17 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col justify-between gap-4 h-full">
       <div className="space-y-4">
-        <div className="has-disabled:opacity-50">
-          <Label htmlFor="name" required>
-            Categoria
-          </Label>
+        <div>
+          <Label htmlFor="name">Categoria</Label>
 
           <Controller
-            name="category"
+            name="categoryId"
             control={control}
-            rules={{ required: 'A categoria é obrigatória' }}
             render={({ field }) => (
               <Autocomplete
+                key={field.value}
                 placeholder="Buscar categoria..."
-                value={field.value}
-                disabled={isEditMode}
-                className="disabled:border-neutral-300"
+                value={field.value ?? ''}
                 status={status}
                 options={options}
                 onChangeInput={setCategorySearch}
@@ -219,6 +215,10 @@ export function ProductFormDrawer({ defaultCategory, defaultProductId = '', onCr
                   </span>
                 )}
               >
+                <Autocomplete.Action onClick={() => setValue('categoryId', null)}>
+                  <ArrowsCounterClockwiseIcon weight="bold" />
+                  Redefinir
+                </Autocomplete.Action>
                 <Autocomplete.Action onClick={openCategoryForm}>
                   <PlusIcon weight="bold" />
                   Adicionar categoria

@@ -27,7 +27,7 @@ export interface ProductForm {
   id?: string;
   name: string;
   type: ProductType;
-  category: string; // id ou nome
+  categoryId?: string | null;
   costPrice?: number;
   salePrice?: number;
   quantity?: number;
