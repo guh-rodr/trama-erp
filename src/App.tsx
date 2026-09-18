@@ -10,7 +10,6 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { CashflowPage } from './pages/cashflow/Page';
 import { CategoriesPage } from './pages/categories/Page';
 import { ContactsPage } from './pages/contacts/Page';
-import { CustomersPage } from './pages/customers/Page';
 import { HomePage } from './pages/home/Page';
 import { ProductsPage } from './pages/products/Page';
 import { SalesPage } from './pages/sales/Page';
@@ -61,10 +60,10 @@ function App() {
                 }
               />
               <Route
-                path="/dashboard/customers"
+                path="/dashboard/contacts"
                 element={
                   <ProtectedRoute>
-                    <CustomersPage />
+                    <ContactsPage />
                   </ProtectedRoute>
                 }
               />
@@ -113,14 +112,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <StockMovementsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dashboard/contacts"
-                element={
-                  <ProtectedRoute>
-                    <ContactsPage />
                   </ProtectedRoute>
                 }
               />
