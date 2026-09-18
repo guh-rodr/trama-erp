@@ -10,11 +10,11 @@ import {
 
 export const MODULES = [
   {
-    key: 'customers',
-    name: 'Clientes',
+    key: 'contacts',
+    name: 'Contatos',
     description: 'Cadastro completo e histórico de compras',
     icon: UsersIcon,
-    href: '/dashboard/customers',
+    href: '/dashboard/contacts',
   },
   {
     key: 'categories',
