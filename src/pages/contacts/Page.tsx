@@ -15,6 +15,7 @@ import { ContactType } from '../../types/contact';
 import { FilterFieldProps } from '../../types/filters';
 import { ContactFormModal } from './components/ContactFormModal';
 import { ContactsTable } from './components/ContactsTable';
+import { CustomerInfoDrawer } from './components/CustomerInfoDrawer';
 
 const filterFields: FilterFieldProps[] = [
   {
@@ -126,7 +127,13 @@ export function ContactsPage() {
     });
   };
 
-  const onViewInfo = (rowId: string) => {};
+  const onViewInfo = (rowId: string) => {
+    openDialog({
+      title: 'Informações do contato',
+      type: 'drawer',
+      content: <CustomerInfoDrawer id={rowId} />,
+    });
+  };
 
   return (
     <DashboardLayout title="Contatos">
