@@ -1,38 +1,5 @@
 import { SaleStatus } from './sale';
 
-interface CustomerBase {
-  name: string;
-  note: string | null;
-  phone: string | null;
-}
-
-export interface CustomerRow extends CustomerBase {
-  id: string;
-  totalSpent: number;
-  debt: number;
-  lastPurchaseAt: string | null;
-}
-
-export interface CustomerResponse {
-  pageCount: number;
-  rowCount: number;
-  rows: CustomerRow[];
-}
-
-export type CustomerAutocomplete = Pick<CustomerRow, 'id' | 'name'>;
-
-export type CustomerOverview = Pick<CustomerRow, 'name' | 'phone' | 'lastPurchaseAt'>;
-
-export interface CustomerForm extends CustomerBase {
-  id?: string;
-}
-
-export interface CustomerOverviewResponse {
-  name: string;
-  phone: string | null;
-  lastPurchaseAt: string | null;
-}
-
 export interface CustomerSaleItem {
   id: string;
   itemCount: number;
@@ -57,4 +24,9 @@ export interface CustomerStatsResponse {
     topSize: string | null;
     topCategory: string | null;
   };
+}
+
+export interface CustomerOption {
+  id: string;
+  name: string;
 }
