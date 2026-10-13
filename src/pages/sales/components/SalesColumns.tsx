@@ -3,14 +3,15 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '../../../components/Checkbox';
 import { formatToReal } from '../../../functions/currency';
 import { formatDate } from '../../../functions/formatDate';
-import { CustomerRow } from '../../../types/customer';
+import { ContactRow } from '../../../types/contact';
 import { SaleRow, SaleStatus } from '../../../types/sale';
 import { SaleStatusBadge } from './SaleStatusBadge';
+import { ContactRow } from '../../../types/contact';
 
 export const getSalesColumns = (actions: {
   onViewInfo: (id: SaleRow['id']) => void;
   onDelete: (id: SaleRow['id']) => void;
-  onViewCustomerInfo: (id: CustomerRow['id']) => void;
+  onViewCustomerInfo: (id: ContactRow['id']) => void;
 }): ColumnDef<SaleRow>[] => [
   {
     id: 'select',

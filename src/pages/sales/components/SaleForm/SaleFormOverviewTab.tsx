@@ -7,13 +7,13 @@ import { Label } from '../../../../components/Label';
 import { useDialog } from '../../../../contexts/dialog/dialog-context';
 import { useCustomersOptions } from '../../../../hooks/useCustomers';
 import { getTodayDate } from '../../../../lib/date';
-import { CustomerRow } from '../../../../types/customer';
+import { ContactRow } from '../../../../types/contact';
 import { SaleForm } from '../../../../types/sale';
-import { CustomerFormModal } from '../../../customers/components/CustomerFormModal';
+import { ContactFormModal } from '../../../contacts/components/ContactFormModal';
 import { SaleItemsTable } from './SaleItemsTable';
 
 interface Props {
-  defaultCustomer?: Pick<CustomerRow, 'id' | 'name'>;
+  defaultCustomer?: Pick<ContactRow, 'id' | 'name'>;
 }
 
 const currentDate = getTodayDate();
@@ -43,7 +43,7 @@ export function SaleFormOverviewTab({ defaultCustomer }: Props) {
     openDialog({
       type: 'modal',
       title: 'Adicionar novo cliente',
-      content: <CustomerFormModal onCreate={(newId) => setValue('customerId', newId)} />,
+      content: <ContactFormModal onCreate={(newId) => setValue('customerId', newId)} />,
     });
   };
 

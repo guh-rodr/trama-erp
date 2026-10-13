@@ -6,14 +6,14 @@ import { useDialog } from '../../../../contexts/dialog/dialog-context';
 import { calcSaleSummary } from '../../../../functions/calcSaleSummary';
 import { useCreateSale } from '../../../../hooks/useSales';
 import { getTodayDate } from '../../../../lib/date';
-import { CustomerRow } from '../../../../types/customer';
+import { ContactRow } from '../../../../types/contact';
 import { SaleForm } from '../../../../types/sale';
 import { SaleFormOverviewTab } from './SaleFormOverviewTab';
 import { SalePaymentTab } from './SalePaymentTab';
 import { SaleSummary } from './SaleSummary';
 
 interface Props {
-  defaultCustomer?: Pick<CustomerRow, 'id' | 'name'>;
+  defaultCustomer?: Pick<ContactRow, 'id' | 'name'>;
   onCreate?: () => void;
 }
 

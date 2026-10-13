@@ -9,9 +9,8 @@ import { useFilter } from '../../hooks/useFilter';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useRowSelection } from '../../hooks/useRowSelection';
 import { useSales } from '../../hooks/useSales';
-import { CustomerRow } from '../../types/customer';
 import { FilterFieldProps, FilterForm } from '../../types/filters';
-import { CustomerInfoDrawer } from '../customers/components/CustomerInfoDrawer';
+import { CustomerInfoDrawer } from '../contacts/components/CustomerInfoDrawer';
 import { SaleDeleteModal } from './components/SaleDeleteModal';
 import { SaleFormDrawer } from './components/SaleForm/SaleForm';
 import { SaleInfoDrawer } from './components/SaleInfoDrawer';
@@ -86,7 +85,7 @@ export function SalesPage() {
     });
   };
 
-  const onViewCustomerInfo = (customerId: CustomerRow['id']) => {
+  const onViewCustomerInfo = (customerId: string) => {
     openDialog({
       title: 'Informações do cliente',
       type: 'drawer',

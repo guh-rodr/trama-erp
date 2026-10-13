@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { CustomerRow } from '../../../types/customer';
 import { CustomerInfoSales } from './CustomerInfoSales';
 import { CustomerInfoStats } from './CustomerInfoStats';
 
 interface Props {
-  id: CustomerRow['id'];
+  id: string;
 }
 
 type Tab = 'sales' | 'stats';

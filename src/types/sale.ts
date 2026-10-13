@@ -1,4 +1,4 @@
-import { CustomerRow } from './customer';
+import { ContactRow } from './contact';
 
 export type SaleStatus = 'PAID' | 'PARTIAL' | 'PENDING';
 
@@ -53,7 +53,7 @@ export interface SaleOverview {
   totalReceived: number;
   profit: number;
   profitReceived: number;
-  customer: Pick<CustomerRow, 'id' | 'name'>;
+  customer: Pick<ContactRow, 'id' | 'name'>;
 }
 
 export interface SaleRow {
@@ -64,7 +64,7 @@ export interface SaleRow {
   profit: number;
   itemCount: number;
   status: SaleStatus;
-  customer: Pick<CustomerRow, 'id' | 'name'>;
+  customer: Pick<ContactRow, 'id' | 'name'>;
 }
 
 export interface SaleResponse {
