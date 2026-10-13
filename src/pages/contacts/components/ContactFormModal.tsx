@@ -11,9 +11,10 @@ import { ContactForm } from '../../../types/contact';
 
 interface Props {
   defaultContactId?: string;
+  onCreate?: (contactId: string) => void;
 }
 
-export function ContactFormModal({ defaultContactId = '' }: Props) {
+export function ContactFormModal({ defaultContactId = '', onCreate }: Props) {
   const isEditMode = !!defaultContactId;
 
   const { data: defaultContact, isFetching } = useContact({ id: defaultContactId });
@@ -33,7 +34,10 @@ export function ContactFormModal({ defaultContactId = '' }: Props) {
       });
     } else {
       createContactMutate(data, {
-        onSuccess: () => closeDialog(),
+        onSuccess: (data) => {
+          closeDialog();
+          onCreate?.(data.id);
+        },
       });
     }
   };
