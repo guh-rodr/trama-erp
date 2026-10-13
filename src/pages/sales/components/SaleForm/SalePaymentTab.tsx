@@ -9,7 +9,7 @@ import { calcSaleSummary } from '../../../../functions/calcSaleSummary';
 import { convertToCents, convertToDecimal, formatToReal } from '../../../../functions/currency';
 import { SaleForm } from '../../../../types/sale';
 import { PaymentEntryContainer } from './PaymentEntryContainer';
-import { PaymentsCashTable } from './PaymentsCashTable';
+import { PaymentsImmediateTable } from './PaymentsImmediateTable';
 import { PaymentsInstallmentsTable } from './PaymentsInstallmentsTable';
 
 export function SalePaymentTab() {
@@ -117,7 +117,7 @@ export function SalePaymentTab() {
                   field.onChange(value);
                   control.unregister('entry');
 
-                  if (value === 'CASH') {
+                  if (value === 'IMMEDIATE') {
                     setValue('payments', [{}]);
                     setValue('receivables', []);
                   } else if (value === 'INSTALLMENT') {
@@ -129,7 +129,7 @@ export function SalePaymentTab() {
                   }
                 }}
                 options={[
-                  { label: 'À vista', value: 'CASH' },
+                  { label: 'À vista', value: 'IMMEDIATE' },
                   { label: 'Crediário', value: 'INSTALLMENT' },
                   { label: 'Conta corrente', value: 'TAB' },
                 ]}
@@ -155,7 +155,7 @@ export function SalePaymentTab() {
         )}
       </div>
 
-      {paymentTerm === 'CASH' && (
+      {paymentTerm === 'IMMEDIATE' && (
         <div className="flex items-center justify-between mt-4">
           <Label className="p-0">Pagamento</Label>
 
@@ -171,7 +171,9 @@ export function SalePaymentTab() {
 
       {paymentTerm === 'INSTALLMENT' && <PaymentsInstallmentsTable reorderReceveibles={reorderReceveibles} />}
 
-      {paymentTerm === 'CASH' && <PaymentsCashTable payments={fields} removePayment={removePayment} total={total} />}
+      {paymentTerm === 'IMMEDIATE' && (
+        <PaymentsImmediateTable payments={fields} removePayment={removePayment} total={total} />
+      )}
 
       {paymentTerm === 'TAB' && <PaymentEntryContainer onBlurValue={handleBlurEntryInput} control={control} />}
 

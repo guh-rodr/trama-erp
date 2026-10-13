@@ -6,7 +6,6 @@ import { formatDate } from '../../../functions/formatDate';
 import { ContactRow } from '../../../types/contact';
 import { SaleRow, SaleStatus } from '../../../types/sale';
 import { SaleStatusBadge } from './SaleStatusBadge';
-import { ContactRow } from '../../../types/contact';
 
 export const getSalesColumns = (actions: {
   onViewInfo: (id: SaleRow['id']) => void;

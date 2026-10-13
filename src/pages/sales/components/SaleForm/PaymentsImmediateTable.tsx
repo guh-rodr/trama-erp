@@ -11,7 +11,7 @@ interface Props {
   total: number;
 }
 
-export function PaymentsCashTable({ payments, removePayment, total }: Props) {
+export function PaymentsImmediateTable({ payments, removePayment, total }: Props) {
   const { control } = useFormContext<SaleForm>();
 
   return (

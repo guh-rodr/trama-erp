@@ -29,7 +29,7 @@ export interface SaleInstallment {
 
 export interface SaleForm {
   customerId: string;
-  paymentTerm: 'CASH' | 'INSTALLMENT' | 'TAB';
+  paymentTerm: 'IMMEDIATE' | 'INSTALLMENT' | 'TAB';
   entry?: {
     method: 'CASH' | 'PIX' | 'CREDIT_CARD' | 'DEBIT_CARD';
     value: number;
