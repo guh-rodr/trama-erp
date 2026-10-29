@@ -91,7 +91,6 @@ export function SaleFormDrawer({ onCreate, defaultCustomer }: Props) {
           </div>
         </div>
 
-        <code>{JSON.stringify(form.formState.errors, null, 2)}</code>
         <div>
           <SaleSummary />
 
