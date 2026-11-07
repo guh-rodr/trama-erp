@@ -1,6 +1,7 @@
 import {
   ArrowsClockwiseIcon,
   ChartLineUpIcon,
+  HandArrowDownIcon,
   PackageIcon,
   ShoppingBagIcon,
   StackIcon,
@@ -43,6 +44,13 @@ export const MODULES = [
     description: 'Lançamento de vendas e listagem geral',
     icon: ShoppingBagIcon,
     href: '/dashboard/sales',
+  },
+  {
+    key: 'receivables',
+    name: 'Contas a receber',
+    description: 'Controla e automatiza a cobrança e recebimento de valores devidos',
+    icon: HandArrowDownIcon,
+    href: '/dashboard/receivables',
   },
   {
     key: 'cashflow',
