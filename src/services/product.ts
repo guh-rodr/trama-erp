@@ -4,6 +4,11 @@ import { ProductForm } from '../types/product';
 
 const API_PATH = '/products';
 
+export interface FetchProductsParams {
+  fetchOnMount: boolean;
+  search?: string;
+}
+
 interface CreateMutationProps extends ProductForm {
   isCategoryCreation?: boolean;
 }
@@ -15,6 +20,11 @@ export async function fetchProduct(id: string) {
 
 export async function fetchProducts({ filter, ...params }: TableParams) {
   const response = await api.post(`${API_PATH}/list`, filter, { params });
+  return response.data;
+}
+
+export async function fetchProductsOptions({ search }: FetchProductsParams) {
+  const response = await api.get(`${API_PATH}/autocomplete`, { params: { search } });
   return response.data;
 }
 

@@ -1,4 +1,4 @@
-import { CategoryItem } from './category';
+import { CategoryRow } from './category';
 
 export interface ProductVariant {
   id: string;
@@ -44,10 +44,16 @@ export type ProductItem = {
   | { isVariable: false; costPrice: number; salePrice: number; quantity: number }
 );
 
+export interface ProductOption {
+  id: string;
+  name: string;
+  category: Pick<CategoryRow, 'id' | 'name'> | null;
+}
+
 export interface ProductRow {
   id: string;
   name: string;
-  category: Pick<CategoryItem, 'id' | 'name'>;
+  category: Pick<CategoryRow, 'id' | 'name'>;
   isVariable: boolean;
   variantCount: number;
   quantity: number;

@@ -1,21 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import {
+  FetchProductsParams,
   bulkDeleteProducts,
   createProduct,
   deleteProduct,
   fetchProduct,
   fetchProductVariants,
   fetchProducts,
+  fetchProductsOptions,
   updateProduct,
 } from '../services/product';
-import { ProductItem, ProductResponse, ProductVariant } from '../types/product';
+import { ProductItem, ProductOption, ProductResponse, ProductVariant } from '../types/product';
 import { TableParams, useTableParams } from './useTableParams';
 
 const productKeys = {
   all: () => ['products'] as const,
   lists: () => [...productKeys.all(), 'list'] as const,
   list: (params: TableParams) => [...productKeys.lists(), params] as const,
+  options: (search?: string) => [...productKeys.all(), 'options', search ?? ''] as const,
   details: () => [...productKeys.all(), 'detail'] as const,
   detail: (id: string) => [...productKeys.details(), id] as const,
   variants: (id: string) => [...productKeys.detail(id), 'variants'] as const,
@@ -44,6 +48,22 @@ export function useProducts() {
     queryKey: productKeys.list(params),
     queryFn: () => fetchProducts(params),
   });
+}
+
+export function useProductsOptions(props: FetchProductsParams) {
+  const [enabled, setEnabled] = useState(props.fetchOnMount ?? true);
+
+  const fetchData = () => {
+    setEnabled(true);
+  };
+
+  const query = useQuery<ProductOption[]>({
+    queryKey: productKeys.options(),
+    queryFn: () => fetchProductsOptions(props),
+    enabled,
+  });
+
+  return { ...query, fetchData };
 }
 
 export function useCreateProduct() {

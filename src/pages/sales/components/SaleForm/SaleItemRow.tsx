@@ -4,8 +4,7 @@ import { Controller, UseFieldArrayRemove, useFormContext, useWatch } from 'react
 import { Autocomplete } from '../../../../components/Autocomplete/Autocomplete';
 import { CurrencyInput } from '../../../../components/CurrencyInput';
 import { convertToDecimal } from '../../../../functions/currency';
-import { useCategoriesAutocomplete } from '../../../../hooks/useCategories';
-import { useProductVariants } from '../../../../hooks/useProducts';
+import { useProductsOptions, useProductVariants } from '../../../../hooks/useProducts';
 import { ProductVariant } from '../../../../types/product';
 import { SaleForm } from '../../../../types/sale';
 import { COLORS } from '../../../../utils/colors';
@@ -29,24 +28,15 @@ export function SaleItemRow({ index, canRemove, remove }: Props) {
   const [productId, variantId] = useWatch({ control, name: [`items.${index}.productId`, `items.${index}.variantId`] });
   const [categorySearch, setCategorySearch] = useState('');
 
-  const { data, status, fetchData } = useCategoriesAutocomplete({
+  const { data, status, fetchData } = useProductsOptions({
     fetchOnMount: false,
     search: categorySearch,
-    canFetchModels: true,
   });
 
-  const categoriesOptions =
-    useMemo(
-      () =>
-        data?.flatMap((category) =>
-          category.products!.map((product) => ({
-            label: product.name,
-            value: product.id,
-            group: category.name,
-          })),
-        ),
-      [data],
-    ) ?? [];
+  const categoriesOptions = useMemo(
+    () => data?.map((d) => ({ label: d.name, value: d.id, group: d.category?.name })) ?? [],
+    [data],
+  );
 
   const { data: variants } = useProductVariants({ id: productId });
   const variantsOptions = useMemo(
