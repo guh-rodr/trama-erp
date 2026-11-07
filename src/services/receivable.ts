@@ -56,7 +56,7 @@ export async function reverseReceivable({ id, ...data }: { id: string } & Receiv
 }
 
 export async function createReceivablesPayments(
-  params: { customerId: string; receivables?: string[]; fifo?: boolean } & AccountPaymentForm,
+  params: { customerId: string; receivables?: string[] } & AccountPaymentForm,
 ) {
   const response = await api.post(`${API_PATH}/payments`, params);
   return response.data;

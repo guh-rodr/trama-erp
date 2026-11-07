@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { CustomerInfoSales } from './CustomerInfoSales';
 import { CustomerInfoStats } from './CustomerInfoStats';
+import { CustomerInfoReceivables } from './CustomerInfoReceivables';
 
 interface Props {
   id: string;
 }
 
-type Tab = 'sales' | 'stats';
+type Tab = 'sales' | 'stats' | 'receivables';
 
 export function CustomerInfoDrawer({ id }: Props) {
   const [tab, setTab] = useState<Tab>('sales');
@@ -31,11 +32,22 @@ export function CustomerInfoDrawer({ id }: Props) {
         >
           Estatísticas
         </button>
+
+        <button
+          type="button"
+          onClick={() => setTab('receivables')}
+          data-enabled={tab === 'receivables'}
+          className="border-b-2 py-1 border-transparent data-enabled:border-black data-enabled:text-black"
+        >
+          Contas a receber
+        </button>
       </div>
 
       {tab === 'sales' && <CustomerInfoSales id={id} />}
 
       {tab === 'stats' && <CustomerInfoStats id={id} />}
+
+      {tab === 'receivables' && <CustomerInfoReceivables id={id} />}
     </div>
   );
 }
