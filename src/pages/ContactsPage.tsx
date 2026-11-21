@@ -1,21 +1,24 @@
+import { Button } from '@/components/Button';
+import { ConfirmationModal } from '@/components/ConfirmationModal';
+import { DashboardLayout } from '@/components/DashboardLayout';
+import { Filter } from '@/components/Filter/Filter';
+import { PageActions } from '@/components/PageActions/PageActions';
+import { SearchBar } from '@/components/SearchBar';
+import { useDialog } from '@/contexts/dialog/dialog-context';
+import { ContactFormModal } from '@/features/contacts/components/ContactFormModal';
+import { ContactsTable } from '@/features/contacts/components/ContactsTable';
+import { CustomerInfoDrawer } from '@/features/contacts/components/CustomerInfoDrawer';
+import { useArchiveContact } from '@/features/contacts/hooks/useArchiveContact';
+import { useContacts } from '@/features/contacts/hooks/useContacts';
+import { useDeleteContact } from '@/features/contacts/hooks/useDeleteContact';
+import { useUnarchiveContact } from '@/features/contacts/hooks/useUnarchiveContact';
+import type { ContactType } from '@/features/contacts/types/contacts.types';
+import { useFilter, type FilterForm } from '@/hooks/useFilter';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useRowSelection } from '@/hooks/useRowSelection';
+import type { FilterFieldProps } from '@/types/filters';
 import { PlusIcon } from '@phosphor-icons/react';
 import { useMemo } from 'react';
-import { Button } from '../../components/Button';
-import { ConfirmationModal } from '../../components/ConfirmationModal';
-import { DashboardLayout } from '../../components/DashboardLayout';
-import { Filter } from '../../components/Filter/Filter';
-import { PageActions } from '../../components/PageActions/PageActions';
-import { SearchBar } from '../../components/SearchBar';
-import { useDialog } from '../../contexts/dialog/dialog-context';
-import { useArchiveContact, useContacts, useDeleteContact, useUnarchiveContact } from '../../hooks/useContacts';
-import { FilterForm, useFilter } from '../../hooks/useFilter';
-import { usePageTitle } from '../../hooks/usePageTitle';
-import { useRowSelection } from '../../hooks/useRowSelection';
-import { ContactType } from '../../types/contact';
-import { FilterFieldProps } from '../../types/filters';
-import { ContactFormModal } from './components/ContactFormModal';
-import { ContactsTable } from './components/ContactsTable';
-import { CustomerInfoDrawer } from './components/CustomerInfoDrawer';
 
 const filterFields: FilterFieldProps[] = [
   {

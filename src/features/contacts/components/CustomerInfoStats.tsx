@@ -1,8 +1,8 @@
-import { ErrorNotification } from '../../../components/ErrorNotification';
-import { LoadingNotification } from '../../../components/LoadingNotification';
-import { formatToReal } from '../../../functions/currency';
-import { useCustomerStats } from '../../../hooks/useCustomers';
-import { COLORS } from '../../../utils/colors';
+import { ErrorNotification } from '@/components/ErrorNotification';
+import { LoadingNotification } from '@/components/LoadingNotification';
+import { formatToReal } from '@/functions/currency';
+import { useCustomerStats } from '@/hooks/useCustomers';
+import { COLORS } from '@/utils/colors';
 
 interface Props {
   id: string;

@@ -1,7 +1,7 @@
-import { RowSelectionState } from '@tanstack/react-table';
-import { Dispatch, SetStateAction, useMemo } from 'react';
-import { DataTable } from '../../../components/DataTable';
-import { ContactResponse } from '../../../types/contact';
+import { DataTable } from '@/components/DataTable';
+import type { ContactResponse } from '@/features/contacts/types/contacts.types';
+import type { RowSelectionState } from '@tanstack/react-table';
+import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { getContactsColumns } from './ContactsColumns';
 
 type RowActions = Parameters<typeof getContactsColumns>[0];

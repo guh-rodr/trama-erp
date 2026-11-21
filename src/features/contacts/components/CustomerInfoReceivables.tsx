@@ -1,15 +1,15 @@
+import { Button } from '@/components/Button';
+import { Checkbox } from '@/components/Checkbox';
+import { ErrorNotification } from '@/components/ErrorNotification';
+import { LoadingNotification } from '@/components/LoadingNotification';
+import { convertToCents, formatToReal } from '@/functions/currency';
+import { formatDate } from '@/functions/formatDate';
+import { useCreateReceivablesPayments, useCustomerReceivables } from '@/hooks/useReceivables';
+import { PaymentFormFields } from '@/pages/receivables/components/PaymentFormFields';
+import type { AccountPaymentForm } from '@/types/receivables';
 import { useMemo, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Button } from '../../../components/Button';
-import { Checkbox } from '../../../components/Checkbox';
-import { ErrorNotification } from '../../../components/ErrorNotification';
-import { LoadingNotification } from '../../../components/LoadingNotification';
-import { convertToCents, formatToReal } from '../../../functions/currency';
-import { formatDate } from '../../../functions/formatDate';
-import { useCreateReceivablesPayments, useCustomerReceivables } from '../../../hooks/useReceivables';
-import { AccountPaymentForm } from '../../../types/receivables';
-import { PaymentFormFields } from '../../receivables/components/PaymentFormFields';
 
 interface Props {
   id: string;

@@ -1,8 +1,8 @@
+import { Badge } from '@/components/Badge';
+import { Checkbox } from '@/components/Checkbox';
+import type { ContactRow, ContactType } from '@/features/contacts/types/contacts.types';
 import { ChecksIcon, InfoIcon, PencilIcon, ProhibitIcon, TrashSimpleIcon } from '@phosphor-icons/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '../../../components/Badge';
-import { Checkbox } from '../../../components/Checkbox';
-import { ContactRow, ContactType } from '../../../types/contact';
+import type { ColumnDef } from '@tanstack/react-table';
 
 export const getContactsColumns = (actions: {
   onEdit: (id: string) => void;

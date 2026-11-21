@@ -1,12 +1,12 @@
+import { Card } from '@/components/Card';
+import { ErrorNotification } from '@/components/ErrorNotification';
+import { LoadingNotification } from '@/components/LoadingNotification';
+import { formatToReal } from '@/functions/currency';
+import { formatDate } from '@/functions/formatDate';
+import { useCustomerPurchases } from '@/hooks/useCustomers';
 import { ArrowSquareOutIcon, CaretRightIcon, ShoppingCartIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { Card } from '../../../components/Card';
-import { ErrorNotification } from '../../../components/ErrorNotification';
-import { LoadingNotification } from '../../../components/LoadingNotification';
-import { formatToReal } from '../../../functions/currency';
-import { formatDate } from '../../../functions/formatDate';
-import { useCustomerPurchases } from '../../../hooks/useCustomers';
 
 interface Props {
   id: string;

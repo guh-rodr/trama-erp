@@ -1,13 +1,15 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { Autocomplete } from '../../../components/Autocomplete/Autocomplete';
-import { Button } from '../../../components/Button';
-import { Input } from '../../../components/Input';
-import { Label } from '../../../components/Label';
-import { LoadingNotification } from '../../../components/LoadingNotification';
-import { Textarea } from '../../../components/Textarea';
-import { useDialog } from '../../../contexts/dialog/dialog-context';
-import { useContact, useCreateContact, useUpdateContact } from '../../../hooks/useContacts';
-import { ContactForm } from '../../../types/contact';
+import { Autocomplete } from '@/components/Autocomplete/Autocomplete';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Label } from '@/components/Label';
+import { LoadingNotification } from '@/components/LoadingNotification';
+import { Textarea } from '@/components/Textarea';
+import { useDialog } from '@/contexts/dialog/dialog-context';
+import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { useContact } from '../hooks/useContact';
+import { useCreateContact } from '../hooks/useCreateContact';
+import { useUpdateContact } from '../hooks/useUpdateContact';
+import type { ContactForm } from '../types/contacts.types';
 
 interface Props {
   defaultContactId?: string;
